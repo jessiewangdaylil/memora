@@ -5,12 +5,17 @@
         <div class="slider-area ">
             <div class="slider-active">
                 <!-- Single Slider -->
+
                 @foreach ($sliders as $slider)
                   <div class="single-slider slider-height d-flex align-items-center slide-bg">
                     <div class="container">
                         <div class="row justify-content-between align-items-center">
+
+
+
                             <div class="col-xl-6 col-lg-6 col-md-7">
                                 <div class="hero__caption">
+
                                     <h1 data-animation="fadeInLeft" data-delay=".4s" data-duration="2000ms"> {{$slider->title}} </h1>
                                     <p data-animation="fadeInLeft" data-delay=".7s" data-duration="2000ms"> {{$slider->subtitle}} </p>
                                     <!-- Hero-btn -->
@@ -24,8 +29,20 @@
                                     <img src="{{Voyager::image($slider->getFirstPic())}}" alt="" class=" heartbeat">
                                 </div>
                             </div>
+
+
+
+
                         </div>
                     </div>
+
+                 {{-- 紙鶴滑過 --}}
+                  <div class="logo-bird-container">
+                    <img src="{{asset('img/logo-bird.png')}}" alt="" class="logo-bird" id="logoBird">
+                  </div>
+
+
+
                 </div>
                 @endforeach
             </div>

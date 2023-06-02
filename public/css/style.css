@@ -43,6 +43,60 @@
 
 /* end */
 
+/* shop商品圖放大 */
+
+.zoomable:hover .popular-img img {
+    transform: scale(1.2);
+    transition: transform 0.6s ease-in-out;
+}
+
+/* end */
+
+/* 菜單選項紙鶴顯示 */
+.image-container {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+}
+
+.image-container:hover::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 3px;
+    width: 20%;
+    height: 100%;
+    background-image: url(../img/logo-bird.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transform: scale(0.8) rotate(-15deg);
+    opacity: 0.8;
+    transition: transform 1.2s ease-in-out;
+}
+
+/* end */
+
+/* banner紙鶴滑過 */
+
+.logo-bird-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+.logo-bird {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%) scale(2) rotate(30deg);
+    transition: transform 0.3s ease-in-out;
+    opacity: 0.9;
+}
+
+/* end */
+
 /* 右邊懸浮圖示 */
 
 .header-right {
@@ -2786,6 +2840,9 @@ input:focus {
     justify-content: center;
 }
 .slider-height {
+    position: relative;
+    /* 上方為紙鶴新增 */
+
     min-height: 900px;
     background-repeat: no-repeat;
     background-position: center center;
@@ -2890,14 +2947,6 @@ input:focus {
 }
 
 /* end */
-
-/* .slider-area .hero__caption h1 {
-    text-transform: normal;
-    font-size: 65px;
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 26px;
-} */
 
 @media only screen and (min-width: 992px) and (max-width: 1199px) {
     .slider-area .hero__caption h1 {

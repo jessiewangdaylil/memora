@@ -50,7 +50,9 @@
                     <div class="menu-wrapper">
                         <!-- Logo -->
                         <div class="logo">
-                            <a href="{{url('/')}}"><img src="{{Voyager::image(setting('site.logo'))}}" alt=""></a>
+
+                          <a href="{{url('/')}}"><img src="{{Voyager::image(setting('site.logo'))}}" alt=""></a>
+
                         </div>
                         <!-- Main-menu -->
                         <div class="main-menu d-none d-lg-block">
@@ -255,6 +257,57 @@
     $('#flash-overlay-modal').modal();
     <!-- Flash Message 3秒之後消失，非必須 -->
     $('div.alert').delay(3000).fadeOut(350);
+
+
+    // logo紙鶴
+// var angle = 0;
+// var radius = 50; // 自行調整弧線的半徑
+// var container = document.querySelector('.hero__image-container');
+// var image = container.querySelector('img');
+
+// container.addEventListener('mousemove', function(event) {
+//   var rect = container.getBoundingClientRect();
+//   var centerX = rect.left + rect.width / 2;
+//   var centerY = rect.top + rect.height / 2;
+//   var mouseX = event.clientX;
+//   var mouseY = event.clientY;
+//   var angle = Math.atan2(mouseY - centerY, mouseX - centerX);
+//   var x = Math.cos(angle) * radius;
+//   var y = Math.sin(angle) * radius;
+
+//   image.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
+// });
+
+
+// 紙鶴滑過
+// 緩慢游離
+const slideBg = document.querySelector('.slider-height');
+const logoBirdContainer = document.querySelector('.logo-bird-container');
+const logoBird = document.querySelector('.logo-bird');
+
+slideBg.addEventListener('mousemove', function(e) {
+    const containerRect = this.getBoundingClientRect();
+    const x = e.clientX - containerRect.left;
+    const y = e.clientY - containerRect.top;
+
+    logoBird.style.transform = `translate(${x}px, ${y}px)`;
+});
+
+// 準確迅速
+// var logoBird = document.getElementById('logoBird');
+
+// document.addEventListener('mousemove', function(event) {
+//     var mouseX = event.clientX;
+//     var mouseY = event.clientY;
+
+//     // 调整logo-bird元素的位置
+//     logoBird.style.left = mouseX + 'px';
+//     logoBird.style.top = mouseY + 'px';
+// });
+
+
+
+
 
 
 
