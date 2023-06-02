@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 Route::middleware([
     'auth:sanctum',
@@ -34,7 +34,7 @@ Route::group(['prefix' => 'admin'], function () {
 Route::namespace ('App\Http\controllers')->group(function () {
     Route::get('/logout1', 'SiteController@logout');
     Route::get('/about', 'SiteController@about');
-    Route::get('/index', 'SiteController@index');
+    Route::get('/', 'SiteController@index');
     Route::get('/shop', 'SiteController@shop');
     Route::get('/product_details/{item}', 'SiteController@product_details');
     Route::get('/add_item/{item}', 'SiteController@addItem');
