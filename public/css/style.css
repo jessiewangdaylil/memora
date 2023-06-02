@@ -283,6 +283,18 @@ i:hover {
     color: #bb5a5a;
 }
 
+/* 註冊圖示 */
+.register-icon {
+    width: 40%;
+    opacity: 0.5;
+}
+
+.header-right ul li {
+    text-align: center;
+}
+
+
+
 /* end */
 
 /* 自訂區域end */
@@ -2722,12 +2734,15 @@ input:focus {
 .header-area .main-header .menu-wrapper .header-right .nav-search {
     display: inline-block;
 }
+
+
 .header-area .main-header .menu-wrapper .header-right span {
     color: #d8918d;
     font-size: 21px;
     cursor: pointer;
     padding: 31px 19px;
 }
+
 .header-area .main-header .menu-wrapper .header-right span:hover {
     color: #bb5a5a;
 }

@@ -97,15 +97,24 @@
                                 </li>
                                 @if(Auth::check())
                                 {{-- <li><a href="{{url('/logout').'/'.Auth::user()->id}}"><i class="fa-solid fa-person-through-window"></i>></a></li> --}}
-                                    <li class="centered-icon"> <a href="{{url('/logout1')}}"><i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
+                                    <li class="centered-icon">
+                                      <a href="{{url('/logout1')}}"><i class="fa-solid fa-arrow-right-from-bracket logout-icon"></i></a>
+                                    </li>
 
                                     {{-- <li> <a href="{{url('/dashboard')}}">                                <img src="{{asset('img/logout.png')}}" alt=""></a></li> --}}
 
                                 @else
-                                   <li> <a href="{{url('/login')}}"><span class="flaticon-user"></span></a></li>
+                                   <li>
+                                    <a href="{{url('/login')}}"><span class="flaticon-user"></span></a>
+                                  </li>
                                 @endif
-                                <li><a href="{{url('/cart')}}"><span class="flaticon-shopping-cart"></span></a> </li>
-                                <li><a href="{{url('/register')}}">註冊</a> </li>
+                                <li>
+                                  <a href="{{url('/cart')}}"><span class="flaticon-shopping-cart"></span></a>
+                                </li>
+
+                                <li>
+                                  <a href="{{url('/register')}}"><img class="register-icon" src="{{asset('img/regester-128.png')}}" alt=""></a>
+                                </li>
                             </ul>
                         </div>
                     </div>
