@@ -95,7 +95,7 @@
                                 </li>
                                 @if(Auth::check())
                                 {{-- <li><a href="{{url('/logout').'/'.Auth::user()->id}}"><i class="fa-solid fa-person-through-window"></i>></a></li> --}}
-                                    <li class="centered-icon"> <a href="{{url('/dashboard')}}"><i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
+                                    <li class="centered-icon"> <a href="{{url('/logout1')}}"><i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
 
                                     {{-- <li> <a href="{{url('/dashboard')}}">                                <img src="{{asset('img/logout.png')}}" alt=""></a></li> --}}
 
