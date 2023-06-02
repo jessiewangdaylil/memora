@@ -103,7 +103,7 @@
                                    <li> <a href="{{url('/login')}}"><span class="flaticon-user"></span></a></li>
                                 @endif
                                 <li><a href="{{url('/cart')}}"><span class="flaticon-shopping-cart"></span></a> </li>
-                                <li><a href="{{url('/register')}}"><span class="flaticon-shopping-cart"></span></a> </li>
+                                <li><a href="{{url('/register')}}">註冊</a> </li>
                             </ul>
                         </div>
                     </div>
