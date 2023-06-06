@@ -120,6 +120,63 @@
 }
 /* end */
 
+/* 首頁照片回憶區 */
+@import url('https://fonts.googleapis.com/css2?family=Caveat');
+
+.Photo-Memory-Container {
+    position: absolute;
+    top: 65%;
+    left: 80%;
+}
+
+.Photo-Memory-Picture {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: 5px solid #fff;
+    border-radius: 3px;
+    background: #fff;
+    color: #bb5a5a;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    transform: translate(-50%, -50%);
+    user-select: none;
+    cursor: pointer;
+}
+
+.Memory-Picture-img {
+    display: block;
+    width: 300px;
+    height: 300px;
+    pointer-events: none;
+}
+
+.Memory-Picture-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 300px;
+    height: 70px;
+    padding: 12px 24px;
+    font-size: 1.5rem;
+    text-align: center;
+    color: #bb5a5a;
+    font-size: 18px;
+}
+
+.Network {
+    display: inline-block;
+    padding: 0 5px;
+}
+
+.Network img {
+    width: 1.5rem;
+    aspect-ratio: 1 / 1;
+    vertical-align: middle;
+}
+
+/* end */
+
 /* shop跑馬燈 */
 .marquee-bg {
     background-color: rgba(255, 255, 255, 0.1);
@@ -293,8 +350,105 @@ i:hover {
     text-align: center;
 }
 
+/* end */
 
+/* 五線譜動態 */
 
+@keyframes slide-in {
+    0% {
+        transform: translateX(-100%) translateY(0);
+    }
+    100% {
+        transform: translateX(0) translateY(200%);
+    }
+}
+
+@keyframes curve {
+    0% {
+        transform: translateX(0) translateY(0) rotate(0deg);
+    }
+    100% {
+        transform: translateX(101%) translateY(-245%) rotate(-6deg);
+    }
+}
+
+.curve-animation {
+    position: relative;
+    top: 300%;
+    left: -20%;
+    /* z-index: 9999; */
+    z-index: -1;
+    pointer-events: none;
+}
+
+.curve-animation img {
+    position: absolute;
+    top: -100px;
+    left: 0;
+}
+
+.curve-animation img.animate {
+    /* 定义新的动画属性 */
+    animation: slide-in 2s ease-in-out forwards, curve 2s ease-in-out forwards;
+}
+
+.Introduction {
+    position: relative;
+    z-index: 1;
+}
+
+/* end */
+
+/* 音樂盒圖片縮放 */
+.displacement {
+    filter: url(#displacementFilter);
+}
+
+/* end */
+
+/* blog留言便利貼 */
+
+.comments {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+}
+
+.comment {
+    position: absolute;
+    width: 20rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: #f7eeda;
+    box-shadow: 0px 0px 15px #555;
+}
+
+.comment:hover {
+    z-index: 2;
+}
+
+.comment:nth-child(1) {
+    top: 8rem;
+    left: calc(20rem - 15rem);
+    transform: rotate(8deg);
+}
+.comment:nth-child(2) {
+    top: 15rem;
+    left: calc(16rem - 15rem);
+    transform: rotate(-11deg);
+}
+.comment:nth-child(3) {
+    top: 20rem;
+    left: calc(23rem - 15rem);
+    transform: rotate(3deg);
+}
+
+.stars {
+    margin-left: auto;
+}
 /* end */
 
 /* 自訂區域end */
@@ -2735,7 +2889,6 @@ input:focus {
     display: inline-block;
 }
 
-
 .header-area .main-header .menu-wrapper .header-right span {
     color: #d8918d;
     font-size: 21px;
@@ -3022,8 +3175,6 @@ input:focus {
     }
 }
 .slide-bg {
-    /* background: #f7ece5; */
-    /* background: #f7eeda; */
     background-image: url(../img/hero/index-banner-bg.jpg);
     background-color: rgba(0, 0, 0, 0.8);
     background-position: bottom;
@@ -3215,6 +3366,12 @@ input:focus {
     display: block;
     cursor: pointer;
 }
+
+.img-cap span {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
 .popular-items .single-popular-items .popular-img .favorit-items {
     position: absolute;
     top: 12px;
@@ -3513,6 +3670,7 @@ input:focus {
 }
 .watch-area .choice-watch-img img {
     width: 100%;
+    filter: url(#displacementFilter);
 }
 .padding-130 {
     padding-bottom: 130px;
