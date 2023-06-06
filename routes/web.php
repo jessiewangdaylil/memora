@@ -28,8 +28,7 @@ Route::middleware([
     })->name('dashboard');
     Route::get('/member_rigister', function () {
         return view('authlevel.member_rigister');
-    })->name('dashboard');
-
+    });
 });
 
 Route::group(['prefix' => 'admin'], function () {

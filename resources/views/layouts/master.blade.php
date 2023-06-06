@@ -22,9 +22,16 @@
     <link rel="stylesheet" href="{{asset('css/nice-select.css')}}">
     <link rel="stylesheet" href="{{asset('css/style.css')}}">
    <link rel="stylesheet" href="{{asset('fontawesome-free-6.2.1-web\css\all.min.css')}}">
+
+
+
    @yield('css')
    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.12.1/dist/cdn.min.js"></script>
    <script src="https://kit.fontawesome.com/2492741ca4.js" crossorigin="anonymous"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+
+
+
    @livewireStyles
 <style>
   #map {
@@ -61,7 +68,9 @@
                     <div class="menu-wrapper">
                         <!-- Logo -->
                         <div class="logo">
-                            <a href="{{url('/')}}"><img src="{{Voyager::image(setting('site.logo'))}}" alt=""></a>
+
+                          <a href="{{url('/')}}"><img src="{{Voyager::image(setting('site.logo'))}}" alt=""></a>
+
                         </div>
                         <!-- Main-menu -->
                         <div class="main-menu d-none d-lg-block">
@@ -106,15 +115,22 @@
                                 </li>
                                 @if(Auth::check())
                                 {{-- <li><a href="{{url('/logout').'/'.Auth::user()->id}}"><i class="fa-solid fa-person-through-window"></i>></a></li> --}}
-                                    <li class="centered-icon"> <a href="{{url('/logout1')}}"><i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
-
-                                    {{-- <li> <a href="{{url('/dashboard')}}">                                <img src="{{asset('img/logout.png')}}" alt=""></a></li> --}}
+                                    <li class="centered-icon">
+                                      <a href="{{url('/logout1')}}"><i class="fa-solid fa-arrow-right-from-bracket logout-icon"></i></a>
+                                    </li>
 
                                 @else
-                                   <li> <a href="{{url('/login')}}"><span class="flaticon-user"></span></a></li>
+                                   <li>
+                                    <a href="{{url('/login')}}"><span class="flaticon-user"></span></a>
+                                  </li>
                                 @endif
-                                <li><a href="{{url('/cart')}}"><span class="flaticon-shopping-cart"></span></a> </li>
-                                <li><a href="{{url('/register')}}"><span class="flaticon-shopping-cart"></span></a> </li>
+                                <li>
+                                  <a href="{{url('/cart')}}"><span class="flaticon-shopping-cart"></span></a>
+                                </li>
+
+                                <li>
+                                  <a href="{{url('/register')}}"><img class="register-icon" src="{{asset('img/regester-128.png')}}" alt=""></span></a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -267,6 +283,146 @@
     $('#flash-overlay-modal').modal();
     <!-- Flash Message 3秒之後消失，非必須 -->
     $('div.alert').delay(3000).fadeOut(350);
+
+
+    // logo紙鶴
+// var angle = 0;
+// var radius = 50; // 自行調整弧線的半徑
+// var container = document.querySelector('.hero__image-container');
+// var image = container.querySelector('img');
+
+// container.addEventListener('mousemove', function(event) {
+//   var rect = container.getBoundingClientRect();
+//   var centerX = rect.left + rect.width / 2;
+//   var centerY = rect.top + rect.height / 2;
+//   var mouseX = event.clientX;
+//   var mouseY = event.clientY;
+//   var angle = Math.atan2(mouseY - centerY, mouseX - centerX);
+//   var x = Math.cos(angle) * radius;
+//   var y = Math.sin(angle) * radius;
+
+//   image.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
+// });
+
+
+// 紙鶴滑過
+// 緩慢游離
+const slideBg = document.querySelector('.slider-height');
+const logoBirdContainer = document.querySelector('.logo-bird-container');
+const logoBird = document.querySelector('.logo-bird');
+
+slideBg.addEventListener('mousemove', function(e) {
+    const containerRect = this.getBoundingClientRect();
+    const x = e.clientX - containerRect.left;
+    const y = e.clientY - containerRect.top;
+
+    logoBird.style.transform = `translate(${x}px, ${y}px)`;
+});
+
+// 準確迅速
+// var logoBird = document.getElementById('logoBird');
+
+// document.addEventListener('mousemove', function(event) {
+//     var mouseX = event.clientX;
+//     var mouseY = event.clientY;
+
+//     // 调整logo-bird元素的位置
+//     logoBird.style.left = mouseX + 'px';
+//     logoBird.style.top = mouseY + 'px';
+// });
+
+
+// -----------------------------------------------
+
+// 音樂盒圖片縮放
+gsap.fromTo('.choice-watch-img', {
+  scale: 1,
+}, {
+  scale: 1.1,
+  repeat: -1,
+  duration: 6,
+  ease: 'power3.inOut',
+  yoyo: true
+});
+
+// 照片回憶區
+const pictures = document.querySelectorAll('.Photo-Memory-Picture');
+var previousTouch = undefined;
+
+function updateElementPosition(element, event) {
+  var movementX, movementY;
+
+  if (event.type === 'touchmove') {
+    const touch = event.touches[0];
+    movementX = previousTouch ? touch.clientX - previousTouch.clientX : 0;
+    movementY = previousTouch ? touch.clientY - previousTouch.clientY : 0;
+    previousTouch = touch;
+  } else {
+    movementX = event.movementX;
+    movementY = event.movementY;
+  }
+
+  const elementY = parseInt(element.style.top || 0) + movementY;
+  const elementX = parseInt(element.style.left|| 0) + movementX;
+
+  element.style.top = elementY + "px";
+  element.style.left = elementX + "px";
+}
+
+function startDrag(element, event) {
+  const updateFunction = (event) => updateElementPosition(element, event);
+  const stopFunction = () => stopDrag({update: updateFunction, stop: stopFunction});
+  document.addEventListener("mousemove", updateFunction);
+  document.addEventListener("touchmove", updateFunction);
+  document.addEventListener("mouseup", stopFunction);
+  document.addEventListener("touchend", stopFunction);
+}
+
+function stopDrag(functions) {
+  previousTouch = undefined;
+  document.removeEventListener("mousemove", functions.update);
+  document.removeEventListener("touchmove", functions.update);
+  document.removeEventListener("mouseup", functions.stop);
+  document.removeEventListener("touchend", functions.stop);
+}
+
+pictures.forEach(picture => {
+  const range = 100;
+  const randomX = Math.random() * (range * 2) - range;
+  const randomY = Math.random() * (range * 2) - range;
+  const randomRotate = Math.random() * (range / 2) - range / 4;
+  const startFunction = (event) => startDrag(picture, event);
+  picture.style.top = `${randomY}px`;
+  picture.style.left = `${randomX}px`;
+  picture.style.transform = `translate(-50%, -50%) rotate(${randomRotate}deg)`;
+  picture.addEventListener("mousedown", startFunction);
+  picture.addEventListener("touchstart", startFunction);
+});
+
+
+//五線譜動態
+// 获取目标元素和动画元素
+const introductionSection = document.querySelector('.Introduction');
+const curveAnimationElement = document.querySelector('.curve-animation img');
+
+// 监听滚动事件
+window.addEventListener('scroll', function() {
+  // 获取目标元素的位置信息
+  const rect = introductionSection.getBoundingClientRect();
+  const windowHeight = window.innerHeight;
+
+  // 判断目标元素是否进入视窗
+  if (rect.top <= windowHeight) {
+    // 添加动画类
+    curveAnimationElement.classList.add('animate');
+  } else {
+    // 移除动画类（可选）
+    curveAnimationElement.classList.remove('animate');
+  }
+});
+
+
+
 
 
 

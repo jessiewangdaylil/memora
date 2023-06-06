@@ -5,12 +5,17 @@
         <div class="slider-area ">
             <div class="slider-active">
                 <!-- Single Slider -->
+
                 @foreach ($sliders as $slider)
                   <div class="single-slider slider-height d-flex align-items-center slide-bg">
                     <div class="container">
                         <div class="row justify-content-between align-items-center">
+
+
+
                             <div class="col-xl-6 col-lg-6 col-md-7">
                                 <div class="hero__caption">
+
                                     <h1 data-animation="fadeInLeft" data-delay=".4s" data-duration="2000ms"> {{$slider->title}} </h1>
                                     <p data-animation="fadeInLeft" data-delay=".7s" data-duration="2000ms"> {{$slider->subtitle}} </p>
                                     <!-- Hero-btn -->
@@ -19,13 +24,25 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xl-4 col-lg-4 col-md-3 col-sm-3 d-none d-sm-block">
+                            {{-- <div class="col-xl-4 col-lg-4 col-md-3 col-sm-3 d-none d-sm-block">
                                 <div class="hero__img" data-animation="bounceIn" data-delay=".4s">
                                     <img src="{{Voyager::image($slider->getFirstPic())}}" alt="" class=" heartbeat">
                                 </div>
-                            </div>
+                            </div> --}}
+
+
+
+
                         </div>
                     </div>
+
+                 {{-- 紙鶴滑過 --}}
+                  <div class="logo-bird-container">
+                    <img src="{{asset('img/logo-bird.png')}}" alt="" class="logo-bird" id="logoBird">
+                  </div>
+
+
+
                 </div>
                 @endforeach
             </div>
@@ -70,6 +87,13 @@
               @endforeach
             </div>
         </div>
+
+      {{-- 五線譜 --}}
+        <div class="curve-animation">
+          <img src="{{asset('img/five-line.png')}}" alt="">
+        </div>
+
+
         <!--(2) Introduction  End-->
         <!--?(3) Video Area Start -->
         <div class="video-area">
@@ -91,55 +115,50 @@
             </div>
         </div>
         <!--(3) Video Area End -->
-        <!--?(4) Item Arrival Start -->
-        {{-- <section class="new-product-area section-padding30">
-            <div class="container">
-                <!-- Section tittle -->
-                <div class="row">
-                    <div class="col-xl-12">
-                        <div class="section-tittle mb-70">
-                            <h2>{{__('New Arrivals')}}</h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                   <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
-                        <div class="single-new-pro mb-30 text-center">
-                            <div class="product-img">
-                                <img src="assets/img/gallery/new_product1.png" alt="">
-                            </div>
-                            <div class="product-caption">
-                                <h3><a href="product_details.html">Thermo Ball Etip Gloves</a></h3>
-                                <span>$ 45,743</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
-                        <div class="single-new-pro mb-30 text-center">
-                            <div class="product-img">
-                                <img src="assets/img/gallery/new_product2.png" alt="">
-                            </div>
-                            <div class="product-caption">
-                                <h3><a href="product_details.html">Thermo Ball Etip Gloves</a></h3>
-                                <span>$ 45,743</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
-                        <div class="single-new-pro mb-30 text-center">
-                            <div class="product-img">
-                                <img src="assets/img/gallery/new_product3.png" alt="">
-                            </div>
-                            <div class="product-caption">
-                                <h3><a href="product_details.html">Thermo Ball Etip Gloves</a></h3>
-                                <span>$ 45,743</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section> --}}
-        <!--(4)  Item Arrival End -->
+
+        {{-- 照片回憶區 --}}
+
+        <div class="Photo-Memory-Container">
+          {{-- <!-- last card -->
+          <div class="Photo-Memory-Picture">
+            <img class="Memory-Picture-img" src="https://media.licdn.com/dms/image/C4D03AQHjPuY9oi3Www/profile-displayphoto-shrink_800_800/0/1579768452204?e=2147483647&v=beta&t=4ZgTgOkSEu2eKRoLWEVtgL8s2zYu80YMxI_0018U9Dk" alt="" />
+            <div class="Memory-Picture-note"><span>@DeyJordan - <a class="Network" href="https://codepen.io/DeyJordan" target="_top"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111501.png" alt="CodePen" /></a><a class="Network" href="https://twitter.com/DeyJordan" target="_top"><img src="https://www.freepnglogos.com/uploads/twitter-logo-png/twitter-logo-vector-png-clipart-1.png" alt="twitter" /></a></span></div>
+          </div> --}}
+          <!-- other cards -->
+          <div class="Photo-Memory-Picture">
+            <img class="Memory-Picture-img" src="https://picsum.photos/id/733/400" alt="" />
+            <div class="Memory-Picture-note"><span>第一次搭飛機</span></div>
+          </div>
+          <div class="Photo-Memory-Picture">
+            <img class="Memory-Picture-img" src="https://picsum.photos/id/613/400" alt="" />
+            <div class="Memory-Picture-note"><span>舊金山</span></div>
+          </div>
+          <div class="Photo-Memory-Picture">
+            <img class="Memory-Picture-img" src="https://picsum.photos/id/465/400" alt="" />
+            <div class="Memory-Picture-note"><span>一個人的攀登</span></div>
+          </div>
+          <div class="Photo-Memory-Picture">
+            <img class="Memory-Picture-img" src="https://picsum.photos/id/1029/400" alt="" />
+            <div class="Memory-Picture-note"><span>紐約</span></div>
+          </div>
+          <div class="Photo-Memory-Picture">
+            <img class="Memory-Picture-img" src="https://picsum.photos/id/923/400" alt="" />
+            <div class="Memory-Picture-note"><span>迷霧森林</span></div>
+          </div>
+          <div class="Photo-Memory-Picture">
+            <img class="Memory-Picture-img" src="https://picsum.photos/id/244/400" alt="" />
+            <div class="Memory-Picture-note"><span>我們的夏天</span></div>
+          </div>
+          <div class="Photo-Memory-Picture">
+            <img class="Memory-Picture-img" src="{{asset('img/photo-memory.png')}}" alt="" />
+            <div class="Memory-Picture-note"><span>生日快樂</span></div>
+          </div>
+        </div>
+
+        <!--(4)  Photo Memory End -->
+
+
+
        <!--?(5) Popular Article Start -->
         {{-- <div class="popular-items section-padding30">
             <div class="container">

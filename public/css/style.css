@@ -43,6 +43,60 @@
 
 /* end */
 
+/* shop商品圖放大 */
+
+.zoomable:hover .popular-img img {
+    transform: scale(1.2);
+    transition: transform 0.6s ease-in-out;
+}
+
+/* end */
+
+/* 菜單選項紙鶴顯示 */
+.image-container {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+}
+
+.image-container:hover::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 3px;
+    width: 20%;
+    height: 100%;
+    background-image: url(../img/logo-bird.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transform: scale(0.8) rotate(-15deg);
+    opacity: 0.8;
+    transition: transform 1.2s ease-in-out;
+}
+
+/* end */
+
+/* banner紙鶴滑過 */
+
+.logo-bird-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+.logo-bird {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%) scale(2) rotate(30deg);
+    transition: transform 0.3s ease-in-out;
+    opacity: 0.9;
+}
+
+/* end */
+
 /* 右邊懸浮圖示 */
 
 .header-right {
@@ -55,7 +109,7 @@
 .header-right ul {
     display: flex;
     flex-direction: column;
-    gap: 10px; /* 圖示之間的間距，可以根據需要調整值 */
+    gap: 20px; /* 圖示之間的間距，可以根據需要調整值 */
 }
 
 .header-right ul li {
@@ -66,30 +120,335 @@
 }
 /* end */
 
+/* 首頁照片回憶區 */
+@import url('https://fonts.googleapis.com/css2?family=Caveat');
+
+.Photo-Memory-Container {
+    position: absolute;
+    top: 65%;
+    left: 80%;
+}
+
+.Photo-Memory-Picture {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: 5px solid #fff;
+    border-radius: 3px;
+    background: #fff;
+    color: #bb5a5a;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    transform: translate(-50%, -50%);
+    user-select: none;
+    cursor: pointer;
+}
+
+.Memory-Picture-img {
+    display: block;
+    width: 300px;
+    height: 300px;
+    pointer-events: none;
+}
+
+.Memory-Picture-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 300px;
+    height: 70px;
+    padding: 12px 24px;
+    font-size: 1.5rem;
+    text-align: center;
+    color: #bb5a5a;
+    font-size: 18px;
+}
+
+.Network {
+    display: inline-block;
+    padding: 0 5px;
+}
+
+.Network img {
+    width: 1.5rem;
+    aspect-ratio: 1 / 1;
+    vertical-align: middle;
+}
+
+/* end */
+
 /* shop跑馬燈 */
+.marquee-bg {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
 .marquee {
     overflow: hidden;
     white-space: nowrap;
-    padding-top: 30px;
+    /* padding-top: 30px; */
 }
 
 .marquee-content {
     display: inline-block;
-    animation: marquee 25s linear infinite;
-    background-color: rgba(255, 255, 255, 0.1);
+    animation: marquee 60s linear infinite;
     color: #d8918d;
-    font-size: 21px;
+    font-size: 18px;
 }
 
 @keyframes marquee {
     0% {
-        transform: translateX(300%);
+        transform: translateX(60%);
     }
     100% {
         transform: translateX(-100%);
     }
 }
 
+/* end */
+
+/* blog掉落禮物 */
+
+.falling-image-1 {
+    position: relative;
+    animation-name: fall;
+    animation-duration: 20s;
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+}
+
+@keyframes fall {
+    0% {
+        top: -100px;
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    100% {
+        top: 100%;
+        opacity: 0;
+        transform: translateX(100px);
+    }
+}
+/* ----- */
+.falling-image-2 {
+    position: relative;
+    animation-name: fall;
+    animation-duration: 15s;
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+}
+
+@keyframes fall {
+    0% {
+        top: -80px;
+        opacity: 1;
+        transform: translateX(50px);
+    }
+
+    100% {
+        top: 100%;
+        opacity: 0;
+        transform: translateX(10px);
+    }
+}
+/* ----- */
+.falling-image-3 {
+    position: relative;
+    animation-name: fall;
+    animation-duration: 25s;
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+}
+
+@keyframes fall {
+    0% {
+        top: -100px;
+        opacity: 1;
+        transform: translateX(100px);
+    }
+
+    100% {
+        top: 100%;
+        opacity: 0;
+        transform: translateX(50px);
+    }
+}
+/* ----- */
+.falling-image-4 {
+    position: relative;
+    animation-name: fall;
+    animation-duration: 20s;
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+}
+
+@keyframes fall {
+    0% {
+        top: -100px;
+        opacity: 1;
+        transform: translateX(120);
+    }
+
+    100% {
+        top: 100%;
+        opacity: 0;
+        transform: translateX(200px);
+    }
+}
+/* ----- */
+.falling-image-5 {
+    position: relative;
+    animation-name: fall;
+    animation-duration: 30s;
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+}
+
+@keyframes fall {
+    0% {
+        top: -100px;
+        opacity: 1;
+        transform: translateX(-50);
+    }
+
+    100% {
+        top: 100%;
+        opacity: 0;
+        transform: translateX(150px);
+    }
+}
+
+/* end */
+
+/* 登出圖示 */
+.centered-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.centered-icon i {
+    color: #d8918d;
+}
+
+i:hover {
+    color: #bb5a5a;
+}
+
+/* 註冊圖示 */
+.register-icon {
+    width: 40%;
+    opacity: 0.5;
+}
+
+.header-right ul li {
+    text-align: center;
+}
+
+/* end */
+
+/* 五線譜動態 */
+
+@keyframes slide-in {
+    0% {
+        transform: translateX(-100%) translateY(0);
+    }
+    100% {
+        transform: translateX(0) translateY(200%);
+    }
+}
+
+@keyframes curve {
+    0% {
+        transform: translateX(0) translateY(0) rotate(0deg);
+    }
+    100% {
+        transform: translateX(101%) translateY(-245%) rotate(-6deg);
+    }
+}
+
+.curve-animation {
+    position: relative;
+    top: 300%;
+    left: -20%;
+    /* z-index: 9999; */
+    z-index: -1;
+    pointer-events: none;
+}
+
+.curve-animation img {
+    position: absolute;
+    top: -100px;
+    left: 0;
+}
+
+.curve-animation img.animate {
+    /* 定义新的动画属性 */
+    animation: slide-in 2s ease-in-out forwards, curve 2s ease-in-out forwards;
+}
+
+.Introduction {
+    position: relative;
+    z-index: 1;
+}
+
+/* end */
+
+/* 音樂盒圖片縮放 */
+.displacement {
+    filter: url(#displacementFilter);
+}
+
+/* end */
+
+/* blog留言便利貼 */
+
+.comments {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+}
+
+.comment {
+    position: absolute;
+    width: 20rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: #f7eeda;
+    box-shadow: 0px 0px 15px #555;
+}
+
+.comment:hover {
+    z-index: 2;
+}
+
+.comment:nth-child(1) {
+    top: 8rem;
+    left: calc(20rem - 15rem);
+    transform: rotate(8deg);
+}
+.comment:nth-child(2) {
+    top: 15rem;
+    left: calc(16rem - 15rem);
+    transform: rotate(-11deg);
+}
+.comment:nth-child(3) {
+    top: 20rem;
+    left: calc(23rem - 15rem);
+    transform: rotate(3deg);
+}
+
+.stars {
+    margin-left: auto;
+}
 /* end */
 
 /* 自訂區域end */
@@ -2529,12 +2888,14 @@ input:focus {
 .header-area .main-header .menu-wrapper .header-right .nav-search {
     display: inline-block;
 }
+
 .header-area .main-header .menu-wrapper .header-right span {
     color: #d8918d;
     font-size: 21px;
     cursor: pointer;
     padding: 31px 19px;
 }
+
 .header-area .main-header .menu-wrapper .header-right span:hover {
     color: #bb5a5a;
 }
@@ -2647,6 +3008,9 @@ input:focus {
     justify-content: center;
 }
 .slider-height {
+    position: relative;
+    /* 上方為紙鶴新增 */
+
     min-height: 900px;
     background-repeat: no-repeat;
     background-position: center center;
@@ -2752,14 +3116,6 @@ input:focus {
 
 /* end */
 
-/* .slider-area .hero__caption h1 {
-    text-transform: normal;
-    font-size: 65px;
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 26px;
-} */
-
 @media only screen and (min-width: 992px) and (max-width: 1199px) {
     .slider-area .hero__caption h1 {
         font-size: 60px;
@@ -2819,8 +3175,6 @@ input:focus {
     }
 }
 .slide-bg {
-    /* background: #f7ece5; */
-    /* background: #f7eeda; */
     background-image: url(../img/hero/index-banner-bg.jpg);
     background-color: rgba(0, 0, 0, 0.8);
     background-position: bottom;
@@ -3012,6 +3366,12 @@ input:focus {
     display: block;
     cursor: pointer;
 }
+
+.img-cap span {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
 .popular-items .single-popular-items .popular-img .favorit-items {
     position: absolute;
     top: 12px;
@@ -3310,6 +3670,7 @@ input:focus {
 }
 .watch-area .choice-watch-img img {
     width: 100%;
+    filter: url(#displacementFilter);
 }
 .padding-130 {
     padding-bottom: 130px;

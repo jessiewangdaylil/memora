@@ -1,6 +1,6 @@
  @foreach ($items as $item)
                             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
-                                <div class="single-popular-items mb-50 text-center">
+                                <div class="single-popular-items mb-50 text-center zoomable">
                                     <div class="popular-img">
                                         <img src="{{Voyager::image($item->getFirstPic())}}" alt="">
                                         <div class="img-cap">
