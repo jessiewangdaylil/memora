@@ -108,8 +108,6 @@
                                       <a href="{{url('/logout1')}}"><i class="fa-solid fa-arrow-right-from-bracket logout-icon"></i></a>
                                     </li>
 
-                                    {{-- <li> <a href="{{url('/dashboard')}}">                                <img src="{{asset('img/logout.png')}}" alt=""></a></li> --}}
-
                                 @else
                                    <li>
                                     <a href="{{url('/login')}}"><span class="flaticon-user"></span></a>
@@ -148,7 +146,7 @@
                             <div class="single-footer-caption mb-30">
                                 <!-- logo -->
                                 <div class="footer-logo">
-                                    <a href="{{url('/index')}}"><img src="{{Voyager::image(setting('site.logo'))}}" alt=""></a>
+                                    <a href="{{url('/')}}"><img src="{{Voyager::image(setting('site.logo'))}}" alt=""></a>
                                 </div>
                                 <div class="footer-tittle">
                                     <div class="footer-pera">

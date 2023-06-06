@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 use Laravel\Jetstream\Jetstream;
+use TCG\Voyager\Models\Role;
 
 class CreateNewUser implements CreatesNewUsers
 {
@@ -30,6 +31,7 @@ class CreateNewUser implements CreatesNewUsers
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
+            'role_id' => Role::where('id', '普通用戶')->first(), //voyager 欄位
         ]);
     }
 }
