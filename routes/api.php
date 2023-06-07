@@ -17,4 +17,4 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::apiResource('addr', 'App\Http\Controllers\Api\FetchDataController');
+Route::get('addr', 'App\Http\Controllers\Api\FetchDataController@getApi');

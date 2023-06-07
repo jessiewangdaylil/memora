@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
+use League\Csv\Reader;
 
 class FetchDataController extends Controller
 {
@@ -14,152 +15,164 @@ class FetchDataController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function getApi()
     {
-
-        $response = Http::get('https://data.moi.gov.tw/MoiOD/System/DownloadFile.aspx?DATA=AE071E62-42F3-4DE1-BA2A-03F2DBFB8713'); //爬蟲:到網路上取得資料
+        //建立路徑
+        $folderPathString = 'app\public\csv';
+        $folderPath = storage_path($folderPathString); //檔案位置的資料夾位置
         $filename = 'data.csv'; //檔案名稱(包含附檔名)
-        $filePath = storage_path('app\public\csv\\' . $filename); //檔案路徑位置
-        $folderPath = storage_path('app\public\csv'); //檔案位置的資料夾位置
-        //檢查檔案位置的資料夾是否存在
-        if (!File::isDirectory('app\public\csv')) {
-            File::makeDirectory($folderPath, 0700, true, true);
+        $filePath = storage_path($folderPathString . '\\' . $filename); //檔案路徑位置
+        $filenameN = 'data_new.csv'; //新檔案名稱(包含附檔名)
+        $filePathN = storage_path($folderPathString . '\\' . $filenameN); //檔案路徑位置
+//----------------------------------------------------------------------------
+        //爬蟲:到網路上取得資料 {
+        $response = Http::get('https://data.moi.gov.tw/MoiOD/System/DownloadFile.aspx?DATA=AE071E62-42F3-4DE1-BA2A-03F2DBFB8713');
+        if ($isSucces = $response->redirect()) {
+            if (!File::exists($filePath)) {
+                //檢查檔案位置的資料夾是否存在
+                if (!File::isDirectory($folderPathString)) {
+                    File::makeDirectory($folderPath, 0700, true, true);
+                }
+                file_put_contents($filePath, $response->body()); //不管檔案是否已存在將爬蟲資料存入指定路徑檔案中，如果不存在自動生成
+            } else {
+                file_put_contents($filePathN, $response->body());
+
+                // 比較 新爬取檔案 與 當前檔案是否有差異
+                // base File 當前檔案
+                $baseFPath = storage_path($folderPathString . '\\' . $filename);
+                $csvO = Reader::createFromPath($baseFPath, 'r');
+                $recordsO = $csvO->getRecords();
+                //new File 新爬取檔案
+                $newFPath = storage_path($folderPathString . '\\' . $filenameN);
+                $csvN = Reader::createFromPath($newFPath, 'r');
+                $recordsN = $csvN->getRecords();
+                // 比較
+                if ($recordsO == $recordsN) {
+                    dd("兩個 CSV 檔案的內容完全相同");
+                } else {
+                    dd("兩個 CSV 檔案的內容不相同");
+                }
+            }
+        } else {
+            //沒爬成功要做的通知
+
         }
-        file_put_contents($filePath, $response->body()); //不管檔案是否已存在將爬蟲資料存入指定路徑檔案中，如果不存在自動生成
 
-        // 指定下載的檔案名稱
+//----------------------------------------------------------------------
+        // //取得csv原始資料
+        // $rows = array_map('str_getcsv', file($filePath)); //原始csv資料
+        // //建立city、town、road 的 初始化處裡容器
+        // $i = 0;
+        // foreach ($rows as $row) {
+        //     $city[$i] = $row[0]; //只有city欄位名稱
+        //     $town[$i] = $row[1]; //只有town欄位名稱
+        //     $road[$i] = $row[2]; //只有road欄位名稱
 
-        // dd($townRelaCity);
+        //     if ($i > 1) {
+        //         $townTrim[$i] = substr($row[1], 3 * 3, strlen($row[1]) - (3 * 3)); // dd(strlen($row[1]));
+        //         $road[$i] = $row[2]; //路名
+        //     } else {
+        //         $townTrim[$i] = $row[1]; //重複鄉政區
+        //     }
+        //     $i++;
+        // }
+        // //過濾city、town重複值
+        // $cityuni = array_unique($city); //不重複城市名稱(尚未修改鍵key)
+        // $townuni = array_unique($town); //不重複城市+鄉政區名稱(尚未修改鍵key)
+        // //town、road修改鍵key名稱 的 初始化處裡容器
+        // //處裡town+roadRelaTown
+        // $i = 2;
+        // $j = 2;
+        // $towndata[0] = $town[0];
+        // $towndata[1] = $town[1];
+        // $towndataTrim[0] = $roadRelaTown[0] = 'roadId_townId';
+        // $towndataTrim[1] = $roadRelaTown[1] = '道路所屬的鄉鎮';
+        // foreach (array_slice($townuni, 2) as $key => $value) {
+        //     $towndata[$i] = $value; //不重複縣市+鄉政區名稱(修改鍵key)
+        //     $towndataTrim[$i] = substr($value, 3 * 3, strlen($value) - 3 * 3); //不重複鄉政區名稱(修改鍵key)
 
-// // 比較 新爬取檔案 與 當前檔案是否有差異
-// // base File 當前檔案
-//         $baseFPath = storage_path('app\public\csv\data.csv');
-//         $csvB = Reader::createFromPath($baseFPath, 'r');
-//         $recordsB = $csvB->getRecords();
-// //new File 新爬取檔案
-//         $newFPath = storage_path('app\public\csv\ndata.csv');
-//         $csvN = Reader::createFromPath($newFPath, 'r');
-//         $recordsN = $csvN->getRecords();
-// // 比較
-//         if ($recordsB == $recordsN) {
-//             dd("兩個 CSV 檔案的內容完全相同");
-//         } else {
-//             dd("兩個 CSV 檔案的內容不相同");
-//         }
+        //     for ($k = $j; $k < count($town); $k++) {
+        //         if ($value == $town[$k]) {
+        //             $roadRelaTown[$k] = $i;
+        //         } else {
+        //             $j = $k;
+        //             $k = count($town);
+        //         }
+        //     }
+        //     $i++;
+        // }
+        // //處裡townRelaCity
+        // $i = 0;
+        // $j = 2;
+        // $townRelaCity[0] = 'cityId_townId';
+        // $townRelaCity[1] = '鄉鎮附屬於的城市';
+        // foreach (array_slice($cityuni, 2) as $key => $value) {
+        //     $citydata[$i] = $value;
+        //     for ($k = $j; $k < count($towndata); $k++) {
 
-//         $response = Http::get('https://data.moi.gov.tw/MoiOD/System/DownloadFile.aspx?DATA=AE071E62-42F3-4DE1-BA2A-03F2DBFB8713');
-//         file_put_contents($filePath, $response->body());
-//         $data = $response->body();
-//         $isSucces = $response->redirect();
-//         $dataObj = $response->body();
+        //         if ($value == substr($towndata[$k], 0, 3 * 3)) {
+        //             $townRelaCity[$k] = $i;
+        //         } else {
+        //             $j = $k;
+        //             $k = count($towndata);
+        //         }
+        //     }
 
-//         //
-//         $filename = 'data.csv'; // 指定下載的檔案名稱
-//         $filePath = storage_path("app\public\csv\\" . $filename);
-//         $rows = array_map('str_getcsv', file($filePath));
-//         $i = 0;
-//         foreach ($rows as $row) {
-//             $city[$i] = $row[0];
-//             $town[$i] = $row[1];
-//             $road[$i] = $row[2];
-
-//             if ($i > 1) {
-//                 $townTrim[$i] = substr($row[1], 3 * 3, strlen($row[1]) - (3 * 3)); // dd(strlen($row[1]));
-//             } else {
-//                 $townTrim[$i] = $row[1];
-//             }
-//             $i++;
-//         }
-//         $cityuni = array_unique($city); //ok
-//         $townuni = array_unique($town); //ok
-
-//         $i = 2;
-//         $j = 2;
-//         $towndata[0] = $town[0];
-//         $towndata[1] = $town[1];
-//         $towndataTrim[0] = $roadRelaTown[0] = 'roadId_townId';
-//         $towndataTrim[1] = $roadRelaTown[1] = '道路所屬的鄉鎮';
-//         foreach (array_slice($townuni, 2) as $key => $value) {
-//             $towndata[$i] = $value;
-//             $towndataTrim[$i] = substr($value, 3 * 3, strlen($value) - 3 * 3);
-
-//             for ($k = $j; $k < count($town); $k++) {
-//                 if ($value == $town[$k]) {
-//                     $roadRelaTown[$k] = $i;
-//                 } else {
-//                     $j = $k;
-//                     $k = count($town);
-//                 }
-//             }
-//             $i++;
-//         }
-
-//         $i = 0;
-//         $j = 2;
-//         $townRelaCity[0] = 'cityId_townId';
-//         $townRelaCity[1] = '鄉鎮附屬於的城市';
-//         foreach (array_slice($cityuni, 2) as $key => $value) {
-//             $citydata[$i] = $value;
-//             for ($k = $j; $k < count($towndata); $k++) {
-//                 // dd($towndata);
-
-//                 if ($value == substr($towndata[$k], 0, 3 * 3)) {
-//                     $townRelaCity[$k] = $i;
-//                 } else {
-//                     $j = $k;
-//                     $k = count($towndata);
-//                 }
-//             }
-
-//             $i++;
-//         }
-
-        // dd($townRelaCity);
+        //     $i++;
+        // }
+        // /*
+        // -------------------------------------------------
+        // $roadRelaTown | total | $townRelaCity |
+        // -------------------------------------------------
+        // $road         | 34694 | $towndataTrim | 361     |
+        // $towndataTrim | 361   | $citydata     | 20      |
+        // -------------------------------------------------
+        //  */
 
         // return view('read_user');
 
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+/**
+ * Store a newly created resource in storage.
+ *
+ * @param
+ * @return
+ */
+    public function store($filePath, $package)
     {
-        //
+        $this->apiFilter($filePath, $package);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+/**
+ * Display the specified resource.
+ *
+ * @param  int  $id
+ * @return \Illuminate\Http\Response
+ */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+/**
+ * Update the specified resource in storage.
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @param  int  $id
+ * @return \Illuminate\Http\Response
+ */
     public function update(Request $request, $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+/**
+ * Remove the specified resource from storage.
+ *
+ * @param  int  $id
+ * @return \Illuminate\Http\Response
+ */
     public function destroy($id)
     {
         //
@@ -184,7 +197,7 @@ class FetchDataController extends Controller
             return '';
         }
     }
-    // 'https: //od.moi.gov.tw/api/v1/rest/datastore/301000000A-000917-035'
+// 'https: //od.moi.gov.tw/api/v1/rest/datastore/301000000A-000917-035'
 
     public function getWebJson(string $url)
     {
@@ -202,4 +215,79 @@ class FetchDataController extends Controller
 
         return $data;
     }
+    public function apiFilter($filePath, $package)
+    {
+        //取得csv原始資料
+        $rows = array_map('str_getcsv', file($filePath)); //原始csv資料
+//建立city、town、road 的 初始化處裡容器
+        $i = 0;
+        foreach ($rows as $row) {
+            $city[$i] = $row[0]; //只有city欄位名稱
+            $town[$i] = $row[1]; //只有town欄位名稱
+            $road[$i] = $row[2]; //只有road欄位名稱
+
+            if ($i > 1) {
+                $townTrim[$i] = substr($row[1], 3 * 3, strlen($row[1]) - (3 * 3)); // dd(strlen($row[1]));
+                $road[$i] = $row[2]; //路名
+            } else {
+                $townTrim[$i] = $row[1]; //重複鄉政區
+            }
+            $i++;
+        }
+// dd($road);
+//過濾city、town重複值
+        $cityuni = array_unique($city); //不重複城市名稱(尚未修改鍵key)
+        $townuni = array_unique($town); //不重複城市+鄉政區名稱(尚未修改鍵key)
+//town、road修改鍵key名稱 的 初始化處裡容器
+//處裡town+roadRelaTown
+        $i = 2;
+        $j = 2;
+        $towndata[0] = $town[0];
+        $towndata[1] = $town[1];
+        $towndataTrim[0] = $roadRelaTown[0] = 'roadId_townId';
+        $towndataTrim[1] = $roadRelaTown[1] = '道路所屬的鄉鎮';
+        foreach (array_slice($townuni, 2) as $key => $value) {
+            $towndata[$i] = $value; //不重複縣市+鄉政區名稱(修改鍵key)
+            $towndataTrim[$i] = substr($value, 3 * 3, strlen($value) - 3 * 3); //不重複鄉政區名稱(修改鍵key)
+
+            for ($k = $j; $k < count($town); $k++) {
+                if ($value == $town[$k]) {
+                    $roadRelaTown[$k] = $i;
+                } else {
+                    $j = $k;
+                    $k = count($town);
+                }
+            }
+            $i++;
+        }
+//處裡townRelaCity
+        $i = 0;
+        $j = 2;
+        $townRelaCity[0] = 'cityId_townId';
+        $townRelaCity[1] = '鄉鎮附屬於的城市';
+        foreach (array_slice($cityuni, 2) as $key => $value) {
+            $citydata[$i] = $value;
+            for ($k = $j; $k < count($towndata); $k++) {
+
+                if ($value == substr($towndata[$k], 0, 3 * 3)) {
+                    $townRelaCity[$k] = $i;
+                } else {
+                    $j = $k;
+                    $k = count($towndata);
+                }
+            }
+
+            $i++;
+        }
+/*
+-------------------------------------------------
+$roadRelaTown | total | $townRelaCity |
+-------------------------------------------------
+$road         | 34694 | $towndataTrim | 361     |
+$towndataTrim | 361   | $citydata     | 20      |
+-------------------------------------------------
+ */
+        return $package = ['city' => $citydata, 'town' => $towndataTrim, 'road' => $road, 'roadRelaTown' => $roadRelaTown, 'townRelaCity' => $townRelaCity];
+    }
+
 }
