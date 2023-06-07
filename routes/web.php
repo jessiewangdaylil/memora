@@ -27,8 +27,11 @@ Route::middleware([
         return view('dashboard');
     })->name('dashboard');
     Route::get('/member_rigister', function () {
-        return view('authlevel.member_rigister');
+        $pzone = ['02', '03', '04', '05'];
+        return view('authlevel.member_rigister', compact('pzone'));
     });
+    Route::post('/update_profile', 'App\Http\Controllers\UpdateProfileController@update');
+
 });
 
 Route::group(['prefix' => 'admin'], function () {

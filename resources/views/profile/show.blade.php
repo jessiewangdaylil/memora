@@ -34,6 +34,8 @@
             </div> --}}
 
             @if (Laravel\Jetstream\Jetstream::hasAccountDeletionFeatures())
+                 <x-jet-section-border />
+             123
                 <x-jet-section-border />
 
                 <div class="mt-10 sm:mt-0">
@@ -42,4 +44,6 @@
             @endif
         </div>
     </div>
+
+
 </x-app-layout>

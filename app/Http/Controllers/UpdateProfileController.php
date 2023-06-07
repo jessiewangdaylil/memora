@@ -68,7 +68,7 @@ class UpdateProfileController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         dd('test');
         $column = ['username', 'first_name', 'last_name', 'gender', 'identify', 'birthday', 'tel', 'mobile', 'post_id', 'address'];
