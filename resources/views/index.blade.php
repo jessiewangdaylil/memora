@@ -127,7 +127,7 @@
           <!-- other cards -->
           <div class="Photo-Memory-Picture">
             <img class="Memory-Picture-img" src="https://picsum.photos/id/733/400" alt="" />
-            <div class="Memory-Picture-note"><span>第一次搭飛機</span></div>
+            <div class="Memory-Picture-note"><span>專屬優惠碼給探索中的你:memora2023</span></div>
           </div>
           <div class="Photo-Memory-Picture">
             <img class="Memory-Picture-img" src="https://picsum.photos/id/613/400" alt="" />
@@ -151,7 +151,7 @@
           </div>
           <div class="Photo-Memory-Picture">
             <img class="Memory-Picture-img" src="{{asset('img/photo-memory.png')}}" alt="" />
-            <div class="Memory-Picture-note"><span>生日快樂</span></div>
+            <div class="Memory-Picture-note"><span>"點擊移動，探索更多回憶👀"</span></div>
           </div>
         </div>
 

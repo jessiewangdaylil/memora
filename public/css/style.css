@@ -157,11 +157,11 @@
     justify-content: center;
     width: 300px;
     height: 70px;
-    padding: 12px 24px;
+    padding: 12px 18px;
     font-size: 1.5rem;
     text-align: center;
     color: #bb5a5a;
-    font-size: 18px;
+    font-size: 17px;
 }
 
 .Network {
@@ -422,8 +422,12 @@ i:hover {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    background: #f7eeda;
-    box-shadow: 0px 0px 15px #555;
+    /* background: #f7eeda; */
+    background-image: url(../img/blog/banner-note-bg.png);
+    /* background-position: bottom center; */
+    /* background-size: cover; */
+    /* opacity: 0.8; */
+    box-shadow: 0px 0px 8px #555;
 }
 
 .comment:hover {

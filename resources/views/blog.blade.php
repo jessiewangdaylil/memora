@@ -23,7 +23,7 @@
 			<div class="comment">
 				<h3>"手作玩偶"</h3>
 				<p> 每次都忍不住想起我們一起笑過、哭過、白癡過！還好有你，分享我人生的每一個時刻💕</p>
-				<span class="stars">⭐⭐⭐⭐⭐</span>
+				<span class="stars">🌸🌸🌸🌸🌸</span>
 			</div>
 			<div class="comment">
 				<h3>"客製手機殼"</h3>
@@ -33,7 +33,7 @@
 			<div class="comment">
 				<h3>"閨蜜寫真"</h3>
 				<p> 跟你約好，走過下一個10年。每次看到你低潮都很捨不得，累的話就回來吧，我們一直都在!</p>
-				<span class="stars">⭐⭐⭐⭐⭐</span>
+				<span class="stars">💓💓💓💓💓</span>
 			</div>
 		</div>
 

@@ -1,10 +1,10 @@
 <x-jet-form-section submit="updateProfileInformation">
     <x-slot name="title">
-        {{ __('Profile Information') }}
+        {{ __('個人資料') }}
     </x-slot>
 
     <x-slot name="description">
-        {{ __('Update your account\'s profile information and email address.') }}
+        {{ __('更新使用者名稱與信箱') }}
     </x-slot>
 
     <x-slot name="form">
@@ -89,7 +89,7 @@
         </x-jet-action-message>
 
         <x-jet-button wire:loading.attr="disabled" wire:target="photo">
-            {{ __('Save') }}
+            {{ __('存檔') }}
         </x-jet-button>
     </x-slot>
 </x-jet-form-section>
