@@ -20,7 +20,12 @@
                                     <p data-animation="fadeInLeft" data-delay=".7s" data-duration="2000ms"> {{$slider->subtitle}} </p>
                                     <!-- Hero-btn -->
                                     <div class="hero__btn" data-animation="fadeInLeft" data-delay=".8s" data-duration="2000ms">
+                                      {{-- 登入狀態點擊a標籤會到商品頁，否則會到註冊頁 --}}
+                                      @if(Auth::check())
+                                        <a href="{{asset('/shop')}}" class="btn hero-btn">{{$slider->url_txt}}</a>
+                                         @else
                                         <a href="{{asset($slider->url)}}" class="btn hero-btn">{{$slider->url_txt}}</a>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
