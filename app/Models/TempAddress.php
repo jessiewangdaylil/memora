@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class TempAddress extends Model
 {
     use HasFactory;
+    protected $fillable = ['url', 'path', 'data', 'create_data', 'delete_data', 'delete_data'];
 }

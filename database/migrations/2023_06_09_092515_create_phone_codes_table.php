@@ -15,8 +15,7 @@ return new class extends Migration
     {
         Schema::create('phone_codes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('country_code')->index()->nullable(); //國碼
-            $table->foreign('country_code')->references('code')->on('countries');
+            $table->foreignId('country_id')->constrained('countries')->unllable(); //國家(為了取得國碼)
             $table->string('code', 20); //國際電話碼
             $table->timestamps();
         });
@@ -30,7 +29,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('phone_codes', function (Blueprint $table) {
-            $table->dropForeign(['country_code']);
+            $table->dropForeign(['country_id']);
         });
 
         Schema::dropIfExists('phone_codes');
