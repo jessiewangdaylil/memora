@@ -40,5 +40,19 @@
 "Update Cart":"更新購物車",
 "Use Coupon":"使用優惠券",
 "Subtotal":"小計",
-"Delete":"刪除"
+"Delete":"刪除",
+"username":"使用者名稱",
+"identify":"身分證字號",
+"first_name":"姓",
+"last_name":"名",
+"body_gender":"生理性別",
+"men":"男性",
+"female":"女性",
+"birthday":"生日",
+"address":"地址",
+"moblie":"手機",
+"tel":"電話",
+"PasswordAuthen":"請輸入密碼",
+"Enable Function Application":"啟用功能申請",
+"back page":"回上一頁"
 }
