@@ -29,4 +29,8 @@ class Kernel extends ConsoleKernel
 
         require base_path('routes/console.php');
     }
+    protected function scheduleTimezone()
+    {
+        return config('app.locale'); //所有排程都使用臺灣時區
+    }
 }

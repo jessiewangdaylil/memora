@@ -13,10 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('item_user', function (Blueprint $table) {
+        Schema::create('countries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('item_id')->constrained();
-            $table->foreignId('user_id')->constrained();
+            $table->integer('level')->default(0); //階層
+            $table->string('code', 10);
+            $table->string('name')->nullable();
             $table->timestamps();
         });
     }
@@ -28,10 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('item_user', function (Blueprint $table) {
-            $table->dropForeign(['item_id']);
-            $table->dropForeign(['user_id']);
-        });
-        Schema::dropIfExists('item_user');
+        Schema::dropIfExists('countries');
     }
 };

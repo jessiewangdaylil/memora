@@ -13,10 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('item_user', function (Blueprint $table) {
+        Schema::create('phone_codes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('item_id')->constrained();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('country_id')->constrained('countries')->unllable(); //國家(為了取得國碼)
+            $table->string('code', 20); //國際電話碼
             $table->timestamps();
         });
     }
@@ -28,10 +28,10 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('item_user', function (Blueprint $table) {
-            $table->dropForeign(['item_id']);
-            $table->dropForeign(['user_id']);
+        Schema::table('phone_codes', function (Blueprint $table) {
+            $table->dropForeign(['country_id']);
         });
-        Schema::dropIfExists('item_user');
+
+        Schema::dropIfExists('phone_codes');
     }
 };

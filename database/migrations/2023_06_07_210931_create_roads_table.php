@@ -13,10 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('item_user', function (Blueprint $table) {
+        Schema::create('roads', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('item_id')->constrained();
-            $table->foreignId('user_id')->constrained();
+            $table->string('name'); //路名
+            $table->integer('level')->default(2); //階層(0國家 1城市 2鄉政區 3路名)
+            $table->foreignId('city_id')->constrained('cities'); //所屬城市
             $table->timestamps();
         });
     }
@@ -28,10 +29,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('item_user', function (Blueprint $table) {
-            $table->dropForeign(['item_id']);
-            $table->dropForeign(['user_id']);
+        Schema::table('roads', function (Blueprint $table) {
+            $table->dropForeign(['city_id']);
         });
-        Schema::dropIfExists('item_user');
+        Schema::dropIfExists('roads');
     }
 };
