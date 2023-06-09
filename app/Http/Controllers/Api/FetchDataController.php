@@ -3,14 +3,18 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\City;
 use App\Models\TempAddress;
 use Carbon\Carbon;
 use Exception;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use League\Csv\CsvException;
 use League\Csv\Reader;
+use ZipArchive;
 
 class FetchDataController extends Controller
 {
@@ -53,6 +57,7 @@ class FetchDataController extends Controller
                     $basicData = iterator_to_array($csviteratorB);
                     //爬取資料分city、town、road項處裡->資料留存
                     $addrData = $this->addrApiFilter($basicData);
+                    $this->createAddrdatabase($addrData);
 
                 }
 
@@ -67,20 +72,92 @@ class FetchDataController extends Controller
                 $oldData = iterator_to_array($csviteratorO);
                 $newData = iterator_to_array($csviteratorN);
                 //存取至資料庫
-                $isSave = $this->storeToTempAddr($newData, $this->url, $filePathN);
+                // $isSave = $this->storeToTempAddr($newData, $this->url, $filePathN);
                 // 比較 新爬取檔案 與 當前檔案是否有差異
                 $diff = $this->compareStrArrDiff($newData, $oldData);
+                $diffFromN = $diff[1];
+                // dd($diffFromN);
                 //爬取資料分city、town、road項處裡
                 $addrDataO = $this->addrApiFilter($oldData);
                 $addrDataN = $this->addrApiFilter($newData);
-                return $isSave;
+                array_unshift($diffFromN, $newData[0], $newData[1]); //配合addrApiFilter 的邏輯
+                $addrDataD = $this->addrApiFilter($diffFromN);
+                // $this->createAddrdatabase($addrDataD);
+                $this->getCityAddrApi();
+                dd($addrDataD);
+                // return $isSave;
                 //沒爬成功要做的通知
-
             }
         } else {
             return '爬取失敗';
+        }
+    }
+    /**
+     *
+     * 將 $this->addrApiFilter後的資料新增到city、town、road Table 中
+     * @return ['執行後的狀態'=>'狀態名稱']
+     */
+    public function createAddrdatabase($addrData)
+    {
+        $city = $addrData[0];
+        // dd($city);
+        $town = $addrData[1];
+        $road = $addrData[2];
+        $i = 0;
+        foreach ($city as $key) {
+            // try {
+            $addCity = new City;
+            $addCity->name = $key[4];
+            // $addCity->level = $key[0];
+            // $addCity->country_id = ;
+            $addCity->save();
+            $i++;
+            // } catch (Exception $e) {
+            //     dd('failed');
+            //     return ['saveLavel' => '1', 'status' => 'saveFailed', 'FailedFrom' => $i, 'errorInfo' => $e];
+            // }
 
         }
+
+        return ['status' => 'success'];
+    }
+    public function getCityAddrApi()
+    {
+        $client = new Client();
+
+        $response = $client->get('https://gist.github.com/jnlin/0847cd6f5db2fe510270/archive/feba481ddea22c0e55e490d5a7bffa8e2ea49d0d.zip');
+        $zipFolder = '0847cd6f5db2fe510270-feba481ddea22c0e55e490d5a7bffa8e2ea49d0d';
+
+        $data = $response->getBody()->getContents();
+        $zipPath = '/public/zip/addr/country.zip';
+// dd(storage_path('app\public\zip\addr\country.zip'));
+        Storage::put($zipPath, $response->getBody());
+        $extractPath = 'app/public/json/addr';
+
+        $zip = new ZipArchive;
+        $zip->open(storage_path('app\\' . $zipPath));
+        $zip->extractTo(storage_path($extractPath));
+        $zip->close();
+        $dataPath = $extractPath . '/' . $zipFolder . '/country.json';
+        $data = file_get_contents(storage_path($dataPath));
+        $jsonData = json_decode($data, true);
+        dd($jsonData);
+        //建立國家代碼表
+        $userinfo_country_code = $jsonData['userinfo_country_code'];
+        $i = 0;
+        $country_code = [];
+        foreach ($userinfo_country_code as $key => $value) {
+            if ($i > 0) {
+                $country_code[$key] = substr($value, 0, strpos($value, '(') - 1);
+            }
+
+            $i++;
+        }
+        //國家代碼與國家名稱+電話碼
+        $userinfo_country_code['userinfo_country_code'];
+        //國家代碼與電話碼
+        $userinfo_country_code['id_to_countrycode'];
+
     }
     /**
      *
@@ -198,7 +275,6 @@ class FetchDataController extends Controller
             $temp = $key;
             $i++;
         }
-        // dd([$cityDatas, $townDatas, $roadDatas]);
         return [$cityDatas, $townDatas, $roadDatas];
     }
     public function compareStrArrDiff($arr, $arr2)
@@ -206,13 +282,34 @@ class FetchDataController extends Controller
         $i = 0;
         foreach ($arr as $key) {
             $strdata[$i++] = join(', ', $key);
+
         }
         $i = 0;
         foreach ($arr2 as $key2) {
             $strdata2[$i++] = join(', ', $key2);
         }
-        $diff = array_diff($strdata, $strdata2);
-        return $diff;
+        $diffStr = array_diff($strdata, $strdata2);
+        $newDataFromArr = [];
+        $deleteDataFromArr2 = [];
+        $i = 0;
+        foreach ($diffStr as $row) {
+            for ($j = 0; $j < count($arr); $j++) {
+                if (join(', ', $arr[$j]) == $row) {
+                    array_push($newDataFromArr, $arr[$j]);
+                    break;
+                }
+            }
+        }
+        $i = 0;
+        foreach ($diffStr as $row) {
+            for ($j = 0; $j < count($arr2); $j++) {
+                if (join(', ', $arr2[$j]) == $row) {
+                    array_push($deleteDataFromArr2, $arr[$j]);
+                    break;
+                }
+            }
+        }
+        return [$diffStr, $newDataFromArr, $deleteDataFromArr2];
     }
 
 /**
