@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\TempAddress;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -44,37 +45,41 @@ class FetchDataController extends Controller
                     //不管檔案是否已存在將爬蟲資料存入指定路徑檔案中，如果不存在自動生成
                     // base File 當前檔案
                     $csviteratorB = $this->readCSV($filePath);
+                    //iterator轉換成Array
+                    $data = iterator_to_array($csviteratorB);
                     //存取至資料庫
-                    $this->storeToTempAddr($csviteratorB, $this->url, $filePath);
+                    $isSave = $this->storeToTempAddr($data, $this->url, $filePath);
                     //iterator轉換成Array
                     $basicData = iterator_to_array($csviteratorB);
                     //爬取資料分city、town、road項處裡->資料留存
                     $addrData = $this->addrApiFilter($basicData);
 
                 }
+
+            } else {
                 //將新爬取的檔案存入本機
                 file_put_contents($filePathN, $response->body());
-
                 // base File 當前檔案
                 $csviteratorO = $this->readCSV($filePath);
                 //new File 新爬取檔案
                 $csviteratorN = $this->readCSV($filePathN);
-                //存取至資料庫
-                $status = $this->storeToTempAddr($csviteratorN, $this->url, $filePathN);
                 //iterator轉換成Array
                 $oldData = iterator_to_array($csviteratorO);
                 $newData = iterator_to_array($csviteratorN);
+                //存取至資料庫
+                $isSave = $this->storeToTempAddr($newData, $this->url, $filePathN);
                 // 比較 新爬取檔案 與 當前檔案是否有差異
                 $diff = $this->compareStrArrDiff($newData, $oldData);
                 //爬取資料分city、town、road項處裡
                 $addrDataO = $this->addrApiFilter($oldData);
                 $addrDataN = $this->addrApiFilter($newData);
-                return $status;
-            } else {
-                return '爬取失敗';
+                return $isSave;
                 //沒爬成功要做的通知
 
             }
+        } else {
+            return '爬取失敗';
+
         }
     }
     /**
@@ -87,12 +92,25 @@ class FetchDataController extends Controller
     {
         try {
             $json = json_encode($data);
+            $today = Carbon::now()->toDateTimeString();
+            $today = str_replace(" ", "_", $today);
+            $today = str_replace(":", "-", $today);
+            $folderPathString = 'app\public\json\addr';
+            $folderPath = storage_path($folderPathString); //檔案位置的資料夾位置
+            if (!File::isDirectory($this->folderPathString)) {
+                File::makeDirectory($folderPath, 0700, true, true);
+            }
+            $filePath = storage_path($folderPathString . '\\' . 'addr_' . $today . '.json'); //檔案路徑位置
+            file_put_contents($filePath, $json);
             $tempAddr = new TempAddress;
-            $tempAddr->data = $json;
+            $tempAddr->json_F_Path = $filePath;
             $tempAddr->url = $url;
             $tempAddr->path = $path;
+            $tempAddr->save();
+
             return ['status' => 'success'];
         } catch (Exception $e) {
+            return $e;
             return ['status' => 'failed'];
         }
     }
