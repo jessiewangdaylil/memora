@@ -13,11 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('roads', function (Blueprint $table) {
+        Schema::create('phone_codes', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); //路名
-            $table->integer('level')->default(2); //階層(0國家 1城市 2鄉政區 3路名)
-            $table->foreignId('city_id')->constrained('cities'); //所屬城市
+            $table->unsignedBigInteger('country_code')->index()->nullable(); //國碼
+            $table->foreign('country_code')->references('code')->on('countries');
+            $table->string('code', 20); //國際電話碼
             $table->timestamps();
         });
     }
@@ -29,9 +29,10 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('roads', function (Blueprint $table) {
-            $table->dropForeign(['city_id']);
+        Schema::table('phone_codes', function (Blueprint $table) {
+            $table->dropForeign(['country_code']);
         });
-        Schema::dropIfExists('roads');
+
+        Schema::dropIfExists('phone_codes');
     }
 };

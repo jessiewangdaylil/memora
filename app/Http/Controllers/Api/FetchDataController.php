@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
-use League\Csv\Reader;
 
 class FetchDataController extends Controller
 {
@@ -27,169 +26,99 @@ class FetchDataController extends Controller
 
 //----------------------------------------------------------------------------
         //爬蟲:到網路上取得資料 {
-        $response = Http::get('https://data.moi.gov.tw/MoiOD/System/DownloadFile.aspx?DATA=AE071E62-42F3-4DE1-BA2A-03F2DBFB8713');
-        if ($isSucces = $response->ok()) {
-            if (!File::exists($filePath)) {
-                //檢查檔案位置的資料夾是否存在
-                if (!File::isDirectory($this->folderPathString)) {
-                    File::makeDirectory($folderPath, 0700, true, true);
-                }
-                file_put_contents($filePath, $response->body()); //不管檔案是否已存在將爬蟲資料存入指定路徑檔案中，如果不存在自動生成
-            } else {
-                file_put_contents($filePathN, $response->body());
+        // $response = Http::get('https://data.moi.gov.tw/MoiOD/System/DownloadFile.aspx?DATA=AE071E62-42F3-4DE1-BA2A-03F2DBFB8713');
+        // if ($isSucces = $response->ok()) {
+        //     if (!File::exists($filePath)) {
+        //         //檢查檔案位置的資料夾是否存在
+        //         if (!File::isDirectory($this->folderPathString)) {
+        //             File::makeDirectory($folderPath, 0700, true, true);
+        //         }
+        //         file_put_contents($filePath, $response->body()); //不管檔案是否已存在將爬蟲資料存入指定路徑檔案中，如果不存在自動生成
+        //     } else {
+        //         file_put_contents($filePathN, $response->body());
 
-                // 比較 新爬取檔案 與 當前檔案是否有差異
-                // base File 當前檔案
-                $csvO = Reader::createFromPath($filePath, 'r');
-                $recordsO = $csvO->getRecords();
-                //new File 新爬取檔案
-                $csvN = Reader::createFromPath($filePathN, 'r');
-                $recordsN = $csvN->getRecords();
-                //iterator轉換成Array
-                $newData = iterator_to_array($recordsN);
-                $old = iterator_to_array($recordsO);
+        //         // 比較 新爬取檔案 與 當前檔案是否有差異
+        //         // base File 當前檔案
+        //         $csvO = Reader::createFromPath($filePath, 'r');
+        //         $recordsO = $csvO->getRecords();
+        //         //new File 新爬取檔案
+        //         $csvN = Reader::createFromPath($filePathN, 'r');
+        //         $recordsN = $csvN->getRecords();
+        //         //iterator轉換成Array
+        //         $newData = iterator_to_array($recordsN);
+        //         $old = iterator_to_array($recordsO);
 
-                $diff = $this->compareStrArrDiff($newData, $old);
-                $i = 0;
-                $cityDatas = [];
-                $townDatas = [];
-                $roadDatas = [];
-                $createIndex = [0, 0, 0];
-                $temp = [];
+        //         $diff = $this->compareStrArrDiff($newData, $old);
+        //         $i = 0;
+        //         $cityDatas = [];
+        //         $townDatas = [];
+        //         $roadDatas = [];
+        //         $createIndex = [0, 0, 0];
+        //         $temp = [];
 
-                //$datas 0階層 1編號 2 父關聯  3子關聯 4 名稱
-                //pushIndex 0 city 1 town 2 road
-                foreach ($newData as $keyN) {
-                    if ($i > 2) {
-                        if ($keyN[0] == $temp[0]) {
-                            //city與前一個相同
-                            if ($keyN[1] == $temp[1]) {
-                                //city與Town前一個相同
-                                $father = $townDatas[$createIndex[1] - 1][1];
-                                array_push($roadDatas, [2, $createIndex[2]++, $father, null, $keyN[2]]);
-                                array_push($townDatas[$createIndex[1] - 1][3], $roadDatas[$createIndex[2] - 1][1]);
-                                // dd($cityDatas, $townDatas, $roadDatas);
+        //         //$datas 0階層 1編號 2 父關聯  3子關聯 4 名稱
+        //         //pushIndex 0 city 1 town 2 road
+        //         foreach ($newData as $keyN) {
+        //             if ($i > 2) {
+        //                 if ($keyN[0] == $temp[0]) {
+        //                     //city與前一個相同
+        //                     if ($keyN[1] == $temp[1]) {
+        //                         //city與Town前一個相同
+        //                         $father = $townDatas[$createIndex[1] - 1][1];
+        //                         array_push($roadDatas, [2, $createIndex[2]++, $father, null, $keyN[2]]);
+        //                         array_push($townDatas[$createIndex[1] - 1][3], $roadDatas[$createIndex[2] - 1][1]);
+        //                         // dd($cityDatas, $townDatas, $roadDatas);
 
-                            } else {
-                                //city與前一個相同、Town與前一個不相同
-                                $father = $cityDatas[$createIndex[0] - 1][1];
-                                array_push($townDatas, [1, $createIndex[1]++, $father, array(), $keyN[1]]);
-                                $father = $townDatas[$createIndex[1] - 1][1];
-                                array_push($roadDatas, [2, $createIndex[2]++, $father, null, $keyN[2]]);
-                                array_push($cityDatas[$createIndex[0] - 1][3], $townDatas[$createIndex[1] - 1][1]);
-                                array_push($townDatas[$createIndex[1] - 1][3], $roadDatas[$createIndex[2] - 1][1]);
-                            }
-                        } else {
-                            //city、Town與前一個不相同
-                            array_push($cityDatas, [0, $createIndex[0]++, null, array(), $keyN[0]]);
-                            array_push($townDatas, [1, $createIndex[1]++, null, array(), $keyN[1]]);
-                            array_push($roadDatas, [2, $createIndex[2]++, null, null, $keyN[2]]);
-                            array_push($cityDatas[$createIndex[0] - 1][3], $townDatas[$createIndex[1] - 1][1]); //city 子階層關聯
-                            $townDatas[$createIndex[1] - 1][2] = $cityDatas[$createIndex[0] - 1][1]; //town 父階層關聯
-                            array_push($townDatas[$createIndex[1] - 1][3], $roadDatas[$createIndex[2] - 1][1]); //town 子階層關聯
-                            $roadDatas[$createIndex[2] - 1][2] = $townDatas[$createIndex[1] - 1][1]; //road 父階層關聯
+        //                     } else {
+        //                         //city與前一個相同、Town與前一個不相同
+        //                         $father = $cityDatas[$createIndex[0] - 1][1];
+        //                         array_push($townDatas, [1, $createIndex[1]++, $father, array(), $keyN[1]]);
+        //                         $father = $townDatas[$createIndex[1] - 1][1];
+        //                         array_push($roadDatas, [2, $createIndex[2]++, $father, null, $keyN[2]]);
+        //                         array_push($cityDatas[$createIndex[0] - 1][3], $townDatas[$createIndex[1] - 1][1]);
+        //                         array_push($townDatas[$createIndex[1] - 1][3], $roadDatas[$createIndex[2] - 1][1]);
+        //                     }
+        //                 } else {
+        //                     //city、Town與前一個不相同
+        //                     array_push($cityDatas, [0, $createIndex[0]++, null, array(), $keyN[0]]);
+        //                     array_push($townDatas, [1, $createIndex[1]++, null, array(), $keyN[1]]);
+        //                     array_push($roadDatas, [2, $createIndex[2]++, null, null, $keyN[2]]);
+        //                     array_push($cityDatas[$createIndex[0] - 1][3], $townDatas[$createIndex[1] - 1][1]); //city 子階層關聯
+        //                     $townDatas[$createIndex[1] - 1][2] = $cityDatas[$createIndex[0] - 1][1]; //town 父階層關聯
+        //                     array_push($townDatas[$createIndex[1] - 1][3], $roadDatas[$createIndex[2] - 1][1]); //town 子階層關聯
+        //                     $roadDatas[$createIndex[2] - 1][2] = $townDatas[$createIndex[1] - 1][1]; //road 父階層關聯
 
-                        }
-                    } elseif ($i == 2) {
-                        //第一筆
-                        array_push($cityDatas, [0, $createIndex[0]++, null, array(), $keyN[0]]);
-                        array_push($townDatas, [1, $createIndex[1]++, null, array(), $keyN[1]]);
-                        array_push($roadDatas, [2, $createIndex[2]++, null, null, $keyN[2]]);
+        //                 }
+        //             } elseif ($i == 2) {
+        //                 //第一筆
+        //                 array_push($cityDatas, [0, $createIndex[0]++, null, array(), $keyN[0]]);
+        //                 array_push($townDatas, [1, $createIndex[1]++, null, array(), $keyN[1]]);
+        //                 array_push($roadDatas, [2, $createIndex[2]++, null, null, $keyN[2]]);
 
-                        array_push($cityDatas[$createIndex[0] - 1][3], $townDatas[$createIndex[1] - 1][1]); //city 子階層關聯
-                        $townDatas[$createIndex[1] - 1][2] = $cityDatas[$createIndex[0] - 1][1]; //town 父階層關聯
-                        array_push($townDatas[$createIndex[1] - 1][3], $roadDatas[$createIndex[2] - 1][1]); //town 子階層關聯
-                        $roadDatas[$createIndex[2] - 1][2] = $townDatas[$createIndex[1] - 1][1]; //road 父階層關聯
+        //                 array_push($cityDatas[$createIndex[0] - 1][3], $townDatas[$createIndex[1] - 1][1]); //city 子階層關聯
+        //                 $townDatas[$createIndex[1] - 1][2] = $cityDatas[$createIndex[0] - 1][1]; //town 父階層關聯
+        //                 array_push($townDatas[$createIndex[1] - 1][3], $roadDatas[$createIndex[2] - 1][1]); //town 子階層關聯
+        //                 $roadDatas[$createIndex[2] - 1][2] = $townDatas[$createIndex[1] - 1][1]; //road 父階層關聯
 
-                    }
-                    $temp = $keyN;
-                    $i++;
-                }
-                dd($cityDatas, $townDatas, $roadDatas);
+        //             }
+        //             $temp = $keyN;
+        //             $i++;
+        //         }
+        //         // dd($cityDatas, $townDatas, $roadDatas);
+        //         // dd(json_encode($cityDatas));
+        //         dd(json_decode(json_encode($cityDatas)));
 
-//                 foreach ($newData as $keyN) {
-//                     $cities[$i++] = $keyN[0];
-//                     $towns[$i++] = $keyN[1];
-//                 }
+        //     }
+        // } else {
+        //     dd('沒有導向');
+        //     //沒爬成功要做的通知
 
-//                 $datas = [];
-//                 $cities = array_unique($cities);
-//                 $towns = array_unique($towns);
-// //
-//                 $i = 0;
-//                 $n = 0;
-//                 foreach ($cities as $city) {
-//                     if ($i > 1) {
-//                         array_push($datas, [0, $n++, null, null, $city]);
-//                     }
-//                     $i++;
-//                 }
-//                 $i = 0;
-//                 $n = 0;
-//                 foreach ($towns as $town) {
-//                     if ($i > 1) {
-//                         array_push($datas, [1, $n++, null, null, substr($town, 3 * 3, strlen($town) - (3 * 3))]);
-//                     }
-//                     $i++;
-//                 }
-//                 $i = 0;
-//                 $n = 0;
-
-//                 foreach ($newData as $key) {
-//                     if ($i > 1) {
-
-//                         array_push($datas, [2, $n++, null, null, $key[2]]);
-//                     }
-
-//                     $i++;
-//                 }
-//                 //確認資料位置
-//                 $cityIndex = 0;
-//                 $townIndex = 0;
-//                 $roadIndex = 0;
-//                 $i = 0;
-//                 $switch = [false, false];
-//                 foreach ($datas as $data) {
-
-//                     if ($data[0] == 0 && $switch[0] == false) {
-//                         $cityIndex = $i;
-//                         $switch[0] = true;
-//                     } elseif ($data[0] == 1 && $switch[1] == false) {
-//                         $townIndex = $i;
-//                         $switch[1] = true;
-//                     } elseif ($data[0] == 2) {
-//                         $roadIndex = $i;
-//                         break;
-//                     }
-//                     $i++;
-//                 }
-//                 $i = 0;
-//                 $cityTemp = array_slice($datas, $cityIndex, $townIndex - $cityIndex);
-//                 $cityTown = array_slice($datas, $townIndex, $roadIndex - $townIndex);
-//                 $cityRoad = array_slice($datas, $roadIndex, count($datas) - 1 - $roadIndex);
-//                 dd($newData);
-//                 $i = 0;
-//                 $switch = [false, false];
-//                 foreach ($newData as $keyN) {
-//                 }
-//                 //
-//                 $i = 0;
-//                 foreach ($datas as $data) {
-//                     $strData[$i++] = join(', ', $data);
-//                 }
-
-                // dd($strData);
-
-            }
-        } else {
-            dd('沒有導向');
-            //沒爬成功要做的通知
-
-        }
+        // }
 
         // return view('read_user');
 
     }
+
     public function compareStrArrDiff($arr, $arr2)
     {
         $i = 0;

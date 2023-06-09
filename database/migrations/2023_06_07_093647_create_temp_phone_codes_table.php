@@ -13,11 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('countries', function (Blueprint $table) {
+        Schema::create('temp_phone_codes', function (Blueprint $table) {
             $table->id();
-            $table->integer('level')->default(0); //階層
-            $table->string('code', 10);
-            $table->string('name')->nullable();
+            $table->string("url", 255); //取得的網址
+            $table->json("data"); //取得的資料
+//版本控管
+            $table->json("create_data")->nullable(); //建立
+            $table->json("delete_data")->nullable(); //刪除
+            $table->json("update_data")->nullable(); //修改
             $table->timestamps();
         });
     }
@@ -29,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('countries');
+        Schema::dropIfExists('temp_phone_codes');
     }
 };

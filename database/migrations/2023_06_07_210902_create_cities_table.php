@@ -16,7 +16,8 @@ return new class extends Migration
         Schema::create('cities', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('country_id')->constrained('countries');
+            $table->integer('level')->default(1); //階層(0國家 1城市 2鄉政區 3路名)
+            $table->foreignId('country_id')->constrained('countries')->unllable(); //所屬國家
             $table->timestamps();
         });
     }
