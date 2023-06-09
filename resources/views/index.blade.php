@@ -78,7 +78,38 @@
                         <div class="col-lg-5 col-md-6">
                             <div class="watch-details mb-40">
                                  <h2>{{$introduction->title}}</h2>
-                                <p>{!!$introduction->content!!}</p>
+                                {{-- <p>{!!$introduction->content!!}</p> --}}
+
+                                {{-- 前面固定，後面換句翻 --}}
+                                {{-- <div class="turn-words-container">
+                                  <p class="turn-words">
+                                   <span class="turn-words-static">紀念，</span>
+                                    <span class="turn-words-scroll">
+                                      <span>我們的回憶不變</span>
+                                      <span>我們的獨特體驗</span>
+                                      <span>我們的驚喜發現</span>
+                                      <span>我們的回憶不變</span> <!-- add the first one to the bottom again -->
+                                    </span>
+                                  </p>
+                                </div> --}}
+
+
+
+                                <div class="turn-words-container">
+                                   <h3 class="turn-words-static">紀念，</h3>
+                                    <h3 class="turn-words">
+                                        <span class="turn-words-scroll">
+                                            <span>我們的回憶不變</span>
+                                            <span>我們的獨特體驗</span>
+                                            <span>我們的驚喜發現</span>
+                                            {{-- <span>我們的回憶不變</span> <!-- 加上第一個元素以循環滾動 --> --}}
+                                        </span>
+                                      </h3>
+                                </div>
+
+
+
+
                                 <a href="{{$introduction->url}}<" class="btn">{{$introduction->url_txt}}</a>
                             </div>
                         </div>
@@ -105,6 +136,18 @@
                     </div>
                     </div>
                 </div>
+
+
+
+
+
+
+
+
+
+
+
+
                 <!-- Arrow -->
                 <div class="thumb-content-box">
                     <div class="thumb-content">
@@ -276,6 +319,10 @@
             </div>
         </div> --}}
         <!--(5) Popular Article End -->
+
+
+
+
 
         <!--? Shop Method Start-->
         <div class="shop-method-area">

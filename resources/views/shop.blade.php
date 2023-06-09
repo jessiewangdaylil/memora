@@ -16,9 +16,9 @@
             </div>
         </div> --}}
 
-        {{-- banner --}}
+        {{-- shop-banner --}}
 <div class="carousel-wrapper">
-  {{-- <div id="carouselExample" class="carousel slide" data-ride="carousel">
+  <div id="carouselExample" class="carousel slide" data-ride="carousel">
     <div class="carousel-inner">
         <div class="carousel-item active">
             <img src="{{asset('img/gallery/banner1.png')}}" alt="">
@@ -46,12 +46,11 @@
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
         <span class="sr-only">Next</span>
     </a>
-  </div> --}}
-
-
-
-
+  </div>
 </div>
+
+
+
 
 
 

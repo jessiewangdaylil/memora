@@ -9,7 +9,7 @@
                     <div class="row">
                         <div class="col-xl-12">
                             <div class="hero-cap text-center">
-                                <h2>{{__('Blog').'-'.$cgy->title}}</h2>
+                                <h2 class="hero-title">{{__('Blog').'-'.$cgy->title}}</h2>
                             </div>
                         </div>
                     </div>

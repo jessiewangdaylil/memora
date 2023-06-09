@@ -94,7 +94,10 @@
                                 </ul> --}}
                             </nav>
                         </div>
+
+
                         <!-- Header Right -->
+                        {{-- 右邊懸浮圖示 --}}
                         <div class="header-right">
                             <ul>
                                 <li>
@@ -119,12 +122,15 @@
                                   <a href="{{url('/cart')}}"><span class="flaticon-shopping-cart"></span></a>
                                 </li>
 
-                                <li>
-                                  <a href="{{url('/register')}}"><img class="register-icon" src="{{asset('img/regester-128.png')}}" alt=""></span></a>
+                                <li class="header-right-item">
+                                  <a href="{{url('/register')}}"><img class="register-icon" src="{{asset('img/regester-128.png')}}" alt=""></a>
                                 </li>
                             </ul>
                         </div>
                     </div>
+
+
+
                     <!-- Mobile Menu -->
                     <div class="col-12">
                         <div class="mobile_menu d-block d-lg-none"></div>
@@ -443,6 +449,13 @@ window.addEventListener('scroll', function() {
       }
     });
   });
+
+
+
+
+
+
+
 
 
 
