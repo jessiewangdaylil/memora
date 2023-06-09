@@ -125,21 +125,13 @@
             <div class="Memory-Picture-note"><span>@DeyJordan - <a class="Network" href="https://codepen.io/DeyJordan" target="_top"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111501.png" alt="CodePen" /></a><a class="Network" href="https://twitter.com/DeyJordan" target="_top"><img src="https://www.freepnglogos.com/uploads/twitter-logo-png/twitter-logo-vector-png-clipart-1.png" alt="twitter" /></a></span></div>
           </div> --}}
           <!-- other cards -->
-          <div class="Photo-Memory-Picture">
+          <div class="Photo-Memory-Picture Photo-Memory-Picture-Coupon">
             <img class="Memory-Picture-img" src="https://picsum.photos/id/733/400" alt="" />
-            <div class="Memory-Picture-note"><span>專屬優惠碼給探索中的你:memora2023</span></div>
+            <div class="Memory-Picture-note"><span>點我領取時光驚喜</span></div>
           </div>
           <div class="Photo-Memory-Picture">
             <img class="Memory-Picture-img" src="https://picsum.photos/id/613/400" alt="" />
             <div class="Memory-Picture-note"><span>舊金山</span></div>
-          </div>
-          <div class="Photo-Memory-Picture">
-            <img class="Memory-Picture-img" src="https://picsum.photos/id/465/400" alt="" />
-            <div class="Memory-Picture-note"><span>一個人的攀登</span></div>
-          </div>
-          <div class="Photo-Memory-Picture">
-            <img class="Memory-Picture-img" src="https://picsum.photos/id/1029/400" alt="" />
-            <div class="Memory-Picture-note"><span>紐約</span></div>
           </div>
           <div class="Photo-Memory-Picture">
             <img class="Memory-Picture-img" src="https://picsum.photos/id/923/400" alt="" />

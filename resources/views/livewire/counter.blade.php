@@ -2,7 +2,9 @@
   <td>
     <div class="{{$class[0]}}">
       <div class="{{$class[1]}}">
-        <img src="{{Voyager::image($item->getFirstPic())}}" alt="" />
+
+          <img src="{{Voyager::image($item->getFirstPic())}}" alt="" style="border-radius: 50%;"/>
+
       </div>
       <div class="{{$class[2]}}">
        <a href="{{url("/product_details").'/'.$item->id}}"><p>{{$item->title}}</p></a>

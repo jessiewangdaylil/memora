@@ -108,12 +108,14 @@
                                       <a href="{{url('/logout1')}}"><i class="fa-solid fa-arrow-right-from-bracket logout-icon"></i></a>
                                     </li>
 
+                                    {{-- <li> <a href="{{url('/dashboard')}}">                                <img src="{{asset('img/logout.png')}}" alt=""></a></li> --}}
+
                                 @else
                                    <li>
                                     <a href="{{url('/login')}}"><span class="flaticon-user"></span></a>
                                   </li>
                                 @endif
-                                <li>
+                                <li class="cart-icon">
                                   <a href="{{url('/cart')}}"><span class="flaticon-shopping-cart"></span></a>
                                 </li>
 
@@ -146,7 +148,7 @@
                             <div class="single-footer-caption mb-30">
                                 <!-- logo -->
                                 <div class="footer-logo">
-                                    <a href="{{url('/')}}"><img src="{{Voyager::image(setting('site.logo'))}}" alt=""></a>
+                                    <a href="{{url('/index')}}"><img src="{{Voyager::image(setting('site.logo'))}}" alt=""></a>
                                 </div>
                                 <div class="footer-tittle">
                                     <div class="footer-pera">
@@ -296,6 +298,7 @@
 
 // 紙鶴滑過
 // 緩慢游離
+// index
 const slideBg = document.querySelector('.slider-height');
 const logoBirdContainer = document.querySelector('.logo-bird-container');
 const logoBird = document.querySelector('.logo-bird');
@@ -307,6 +310,8 @@ slideBg.addEventListener('mousemove', function(e) {
 
     logoBird.style.transform = `translate(${x}px, ${y}px)`;
 });
+
+
 
 // 準確迅速
 // var logoBird = document.getElementById('logoBird');
@@ -409,6 +414,41 @@ window.addEventListener('scroll', function() {
     curveAnimationElement.classList.remove('animate');
   }
 });
+
+
+/* 點擊最後一張跳出優惠碼視窗 */
+// 獲取元素
+  const photoMemoryPictureCoupon = document.querySelector('.Photo-Memory-Picture-Coupon');
+
+  // 點擊事件監聽器
+  photoMemoryPictureCoupon.addEventListener('click', function() {
+    // 創建蓋屏視窗元素
+    const overlay = document.createElement('div');
+    overlay.classList.add('coupon-overlay');
+
+    // 創建蓋屏視窗內容元素
+    const overlayContent = document.createElement('div');
+    overlayContent.classList.add('coupon-overlay-content');
+    overlayContent.innerHTML = '<span>專屬優惠碼給探索中的你: memora2023</span>';
+
+    // 將蓋屏視窗內容添加到蓋屏視窗元素中
+    overlay.appendChild(overlayContent);
+
+    // 將蓋屏視窗元素添加到body中
+    document.body.appendChild(overlay);
+
+    overlay.addEventListener('click', function(event) {
+      if (event.target === overlay) {
+        overlay.remove();
+      }
+    });
+  });
+
+
+
+
+
+
 
 
 

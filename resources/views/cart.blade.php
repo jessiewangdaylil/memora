@@ -104,7 +104,7 @@
                     <td></td>
                     <td></td>
                     <td>
-                      <h5>Shipping</h5>
+                      <h5>運費</h5>
                     </td>
                     <td>
                       <div class="shipping_box">
@@ -114,16 +114,16 @@
                             <input  type="radio" aria-label="Radio button for following text input">
                           </li>
                           <li>
-                            Free Shipping
+                            免運費
                             <input  type="radio" aria-label="Radio button for following text input">
                           </li>
                           <li class="active">
-                            Local Delivery: $2.00
+                            本地運送: $2.00
                             <input  type="radio" aria-label="Radio button for following text input">
                           </li>
                         </ul>
                         <h6>
-                          Calculate Shipping
+                          計算運費
                           <i class="fa fa-caret-down" aria-hidden="true"></i>
                         </h6>
                         <select class="shipping_select">
@@ -144,8 +144,8 @@
                 </tbody>
               </table>
               <div class="checkout_btn_inner float-right">
-                <a class="btn_1" href="{{url('/shop')}}">Continue Shopping</a>
-                <a class="btn_1 checkout_btn_1" href="#">Proceed to checkout</a>
+                <a class="btn_1" href="{{url('/shop')}}">探索更多禮物</a>
+                <a class="btn_1 checkout_btn_1" href="#">前往付款</a>
               </div>
             </div>
           </div>
