@@ -7,16 +7,14 @@ use App\Models\City;
 use App\Models\TempAddress;
 use Carbon\Carbon;
 use Exception;
-use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use League\Csv\CsvException;
 use League\Csv\Reader;
-use ZipArchive;
 
-class FetchDataController extends Controller
+class FetchAddrDataController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -28,7 +26,7 @@ class FetchDataController extends Controller
     public $filename = 'data.csv'; //檔案名稱(包含附檔名)
     public $filenameN = 'data_new.csv'; //新檔案名稱(包含附檔名)
     public $url = 'https://data.moi.gov.tw/MoiOD/System/DownloadFile.aspx?DATA=AE071E62-42F3-4DE1-BA2A-03F2DBFB8713';
-    public function getApi()
+    public function getAddrApi()
     {
 //處裡存放路徑
         $folderPath = storage_path($this->folderPathString); //檔案位置的資料夾位置
@@ -82,10 +80,9 @@ class FetchDataController extends Controller
                 $addrDataN = $this->addrApiFilter($newData);
                 array_unshift($diffFromN, $newData[0], $newData[1]); //配合addrApiFilter 的邏輯
                 $addrDataD = $this->addrApiFilter($diffFromN);
-                // $this->createAddrdatabase($addrDataD);
-                $this->getCityAddrApi();
+                $this->createAddrdatabase($addrDataD);
                 dd($addrDataD);
-                // return $isSave;
+                return $isSave;
                 //沒爬成功要做的通知
             }
         } else {
@@ -120,44 +117,6 @@ class FetchDataController extends Controller
         }
 
         return ['status' => 'success'];
-    }
-    public function getCityAddrApi()
-    {
-        $client = new Client();
-
-        $response = $client->get('https://gist.github.com/jnlin/0847cd6f5db2fe510270/archive/feba481ddea22c0e55e490d5a7bffa8e2ea49d0d.zip');
-        $zipFolder = '0847cd6f5db2fe510270-feba481ddea22c0e55e490d5a7bffa8e2ea49d0d';
-
-        $data = $response->getBody()->getContents();
-        $zipPath = '/public/zip/addr/country.zip';
-// dd(storage_path('app\public\zip\addr\country.zip'));
-        Storage::put($zipPath, $response->getBody());
-        $extractPath = 'app/public/json/addr';
-
-        $zip = new ZipArchive;
-        $zip->open(storage_path('app\\' . $zipPath));
-        $zip->extractTo(storage_path($extractPath));
-        $zip->close();
-        $dataPath = $extractPath . '/' . $zipFolder . '/country.json';
-        $data = file_get_contents(storage_path($dataPath));
-        $jsonData = json_decode($data, true);
-        dd($jsonData);
-        //建立國家代碼表
-        $userinfo_country_code = $jsonData['userinfo_country_code'];
-        $i = 0;
-        $country_code = [];
-        foreach ($userinfo_country_code as $key => $value) {
-            if ($i > 0) {
-                $country_code[$key] = substr($value, 0, strpos($value, '(') - 1);
-            }
-
-            $i++;
-        }
-        //國家代碼與國家名稱+電話碼
-        $userinfo_country_code['userinfo_country_code'];
-        //國家代碼與電話碼
-        $userinfo_country_code['id_to_countrycode'];
-
     }
     /**
      *
