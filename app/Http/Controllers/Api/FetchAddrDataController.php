@@ -116,7 +116,7 @@ class FetchAddrDataController extends Controller
 
         }
 
-        return ['status' => 'success'];
+        return ['saveLavel' => '1', 'status' => 'success'];
     }
     /**
      *

@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class PhoneCode extends Model
 {
     use HasFactory;
+    protected $fillable = ['country_id', 'code'];
 }
