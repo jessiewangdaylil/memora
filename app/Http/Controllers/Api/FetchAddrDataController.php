@@ -12,7 +12,6 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 use League\Csv\CsvException;
 use League\Csv\Reader;
 
@@ -27,7 +26,7 @@ class FetchAddrDataController extends Controller
 /**
  *
  * 取得地址的API方法
- * @return
+ * @return  執行後的狀態
  */
     public function getAddrApi()
     {
@@ -61,8 +60,8 @@ class FetchAddrDataController extends Controller
                 $basicData = iterator_to_array($csviteratorB);
                 //爬取資料分city、town、road項處裡->資料留存
                 $addrData = $this->addrApiFilter($basicData);
-                $this->createAddrdatabase($addrData);
-                dd('wait');
+                //新增city、town、road至資料表
+                return $this->createAddrdatabase($addrData);
             } else {
                 //將新爬取的檔案存入本機
                 file_put_contents($filePathN, $response->body());
@@ -84,10 +83,11 @@ class FetchAddrDataController extends Controller
                 $addrDataN = $this->addrApiFilter($newData);
                 array_unshift($diffFromN, $newData[0], $newData[1]); //配合addrApiFilter 的邏輯
                 $addrDataD = $this->addrApiFilter($diffFromN);
-                $this->createAddrdatabase($addrDataD);
-                dd($addrDataD);
-                // return $isSave;
-                //沒爬成功要做的通知
+                //新增city、town、road至資料表
+                $status = $this->createAddrdatabase($addrDataD);
+                //將新csv資料取代舊資料
+                file_put_contents($filePath, $response->body());
+                return $status;
             }
         } else {
             return '爬取失敗';
@@ -100,19 +100,39 @@ class FetchAddrDataController extends Controller
      */
     public function createAddrdatabase($addrData)
     {
-
+        //分別取出city、town、road
         $city = $addrData[0];
-        $town = $addrData[1];
+        $town = $addrData[1]; //值的格式 縣市名稱+鄉政名稱
         $road = $addrData[2];
-        $i = 0;
+
+        //指定國家代碼條件為'TW' 台灣
         $country = Country::where('code', 'TW')->first();
-        // $this->storeCityTable($city, $country);
-        // $this->storeTownTable($town, $city, $country);
-        $this->storeRoadTable($road, $town, $city, $country);
-        dd('wait2');
-        return ['saveLavel' => '1', 'status' => 'success'];
+        //存入城市資料庫
+        $status = $this->storeCityTable($city, $country);
+        if ($status['status'] = 'saveSuccess') {
+            //存入鄉鎮區資料庫
+            $status = $this->storeTownTable($town, $city, $country);
+            if ($status['status'] = 'saveSuccess') {
+                //存入道路資料庫
+                $status = $this->storeRoadTable($road, $town, $city, $country);
+                if ($status['status'] = 'saveSuccess') {
+                    return ['已存入資料庫', $status];
+                } else {
+                    return ['道路資料存入資料表失敗，請手動更改', $status];
+                }
+            } else {
+                return ['鄉鎮區資料存入資料表失敗，請手動更改', $status];
+            }
+        } else {
+            return ['城市資料存入資料表失敗，請手動更改', $status];
+        }
     }
 
+    /**
+     *
+     * 存入資料到城市資料庫
+     * @return ['給維護人員的資訊','執行後的狀態'=>'狀態名稱']
+     */
     public function storeCityTable($city, $country)
     {
         //$datas 0階層 1編號 2 父關聯  3子關聯 4 名稱
@@ -128,98 +148,154 @@ class FetchAddrDataController extends Controller
                     $i++;
                 }
             } catch (Exception $e) {
-                dd('error');
                 $k = $i;
-                return [];
+                $i = 0;
+                foreach ($city as $key) {
+                    try {
+                        $city = City::where('name', $key[4])->where('level', $key[0])->where('country_id', $country->id)->latest('created_at')->first();
+                        $city->delete();
+                        if ($i >= $k) {
+                            break;
+                        }
+                        $i++;
+                    } catch (Exception $e) {
+                        return ['status' => 'deleteCitiesFailed', 'errorIndex' => $i];
+                    }
+                }
             }
         }
-        return [];
+        return ['status' => 'saveSuccess', 'alreadySaveindex' => $i];
     }
+
+    /**
+     *
+     * 存入資料到鄉鎮區資料庫
+     * @return ['給維護人員的資訊','執行後的狀態'=>'狀態名稱']
+     */
     public function storeTownTable($town, $city, $country)
     {
         //$datas 0階層 1編號 2 父關聯  3子關聯 4 名稱
         $i = 0;
-
         foreach ($town as $key) {
             try {
-                $cityQuery = City::where('name', $city[$key[2]][4])->where('country_id', $country->id)->first();
-                if (count(Town::where('name', substr($key[4], 3 * 3, 3 * 3))->where('level', $key[0])->where('city_id', $cityQuery->id)) == 0) {
+                $cityQuery[$i] = City::where('name', $city[$key[2]][4])->where('country_id', $country->id)->first();
+                if (count(Town::where('name', substr($key[4], 3 * 3, 3 * 3))->where('level', $key[0])->where('city_id', $cityQuery[$i]->id)->get()) == 0) {
                     $addTown = new Town;
                     $addTown->name = substr($key[4], 3 * 3, 3 * 3);
                     $addTown->level = $key[0];
-                    $addTown->city_id = $cityQuery->id;
+                    $addTown->city_id = $cityQuery[$i]->id;
                     $addTown->save();
                     $i++;
                 }
             } catch (Exception $e) {
                 $k = $i;
-                return [];
+                $i = 0;
+                foreach ($town as $key) {
+                    try {
+                        $towm = Town::where('name', substr($key[4], 3 * 3, 3 * 3))->where('level', $key[0])->where('city_id', $cityQuery[$i]->id)->latest('created_at')->first();
+                        if (!$towm == null) {
+                            $towm->delete();
+                        }
+                        if ($i >= $k) {
+                            break;
+                        }
+                        $i++;
+
+                    } catch (Exception $e) {
+                        return ['status' => 'deleteTownsFailed', 'errorIndex' => $i];
+                    }
+                }
             }
         }
-        return [];
+        return ['status' => 'saveSuccess', 'alreadySaveindex' => $i];
     }
+
+    /**
+     *
+     *  存入資料到道路資料庫
+     * @return ['給維護人員的資訊','執行後的狀態'=>'狀態名稱']
+     */
     public function storeRoadTable($road, $town, $city, $country)
     {
+        set_time_limit(1000);
 //$datas 0階層 1編號 2 父關聯  3子關聯 4 名稱
         $i = 0;
-
         foreach ($road as $key) {
             try {
                 $cityQuery = City::where('name', $city[$town[$key[2]][2]][4])->where('country_id', $country->id)->first();
-                $townQuery = Town::where('city_id', $cityQuery->id)->first();
-                if (Road::where('name', $key[4])->where('level,', $key[0])->where('town_id', $townQuery->id)) {
+                $townQuery[$i] = Town::where('city_id', $cityQuery->id)->where('name', substr($town[$key[2]][4], 3 * 3, 3 * 3))->first();
+                if (count(Road::where('name', $key[4])->where('level', $key[0])->where('town_id', $townQuery[$i]->id)->get()) == 0) {
                     $addRoad = new Road;
                     $addRoad->name = $key[4];
                     $addRoad->level = $key[0];
-                    $addRoad->town_id = $townQuery->id;
+                    $addRoad->town_id = $townQuery[$i]->id;
                     $addRoad->save();
                     $i++;
                 }
             } catch (Exception $e) {
                 $k = $i;
-                return [];
+                $i = 0;
+                foreach ($road as $key) {
+                    try {
+                        $road = Road::where('name', $key[4])->where('level', $key[0])->where('town_id', $townQuery[$i]->id)->latest('created_at')->first();
+                        if (!$road == null) {
+                            $road->delete();
+                        }
+                        if ($i >= $k) {
+                            break;
+                        }
+                        $i++;
+                    } catch (Exception $e) {
+                        return ['status' => 'deleteTownsFailed', 'errorIndex' => $i];
+                    }
+                }
+
             }
         }
-        return [];
-
+        return ['status' => 'saveSuccess', 'alreadySaveindex' => $i];
     }
+
     /**
      *
      * 將讀取的csv檔資料轉為json格式存入資料庫
      * @return ['執行後的狀態'=>'狀態名稱']
      */
-
     public function storeToTempAddr($data, $url, $path)
     {
         try {
             $json = json_encode($data);
+            //處裡存入資料路徑名稱
             $today = Carbon::now()->toDateTimeString();
             $today = str_replace(" ", "_", $today);
             $today = str_replace(":", "-", $today);
             $folderPathString = 'app\public\json\addr';
-            $folderPath = storage_path($folderPathString); //檔案位置的資料夾位置
+            //檔案位置的資料夾位置
+            $folderPath = storage_path($folderPathString);
+            //檢查存入路徑是否存在
             if (!File::isDirectory($this->folderPathString)) {
                 File::makeDirectory($folderPath, 0700, true, true);
             }
-            $filePath = storage_path($folderPathString . '\\' . 'addr_' . $today . '.json'); //檔案路徑位置
+            //檔案路徑位置
+            $filePath = storage_path($folderPathString . '\\' . 'addr_' . $today . '.json');
+            //將json檔存入至指定路徑
             file_put_contents($filePath, $json);
+            //將暫存資料資訊存入資料庫
             $tempAddr = new TempAddress;
             $tempAddr->json_F_Path = $filePath;
             $tempAddr->url = $url;
             $tempAddr->path = $path;
             $tempAddr->save();
-
             return ['status' => 'success'];
         } catch (Exception $e) {
-            return $e;
-            return ['status' => 'failed'];
+            return ['status' => 'failed', $e];
         }
     }
-/**
- *
- * 提供路徑讀取存在的csv檔
- * @return [城市資料,鄉政資料,路名資料]
- */
+
+    /**
+     *
+     * 提供路徑讀取存在的csv檔
+     * @return [城市資料,鄉政資料,路名資料]
+     */
     public function readCSV($filePath)
     {
         try {
@@ -233,6 +309,7 @@ class FetchAddrDataController extends Controller
         }
         return $records;
     }
+
     /**
      *
      * 解析陣列版本的地址資料
@@ -302,20 +379,27 @@ class FetchAddrDataController extends Controller
         }
         return [$cityDatas, $townDatas, $roadDatas];
     }
+
+/**
+ *
+ * 比較兩個csv轉換的陣列資料是否相同
+ * @return 差異的資料 [(array)城市資料,(array)鄉政資料,(array)路名資料]
+ */
     public function compareStrArrDiff($arr, $arr2)
     {
+        // $key為csv型式的字串，join()將轉換陣列資料
         $i = 0;
         foreach ($arr as $key) {
             $strdata[$i++] = join(', ', $key);
-
         }
         $i = 0;
         foreach ($arr2 as $key2) {
             $strdata2[$i++] = join(', ', $key2);
         }
+        //比較兩者陣列差異
         $diffStr = array_diff($strdata, $strdata2);
-        $newDataFromArr = [];
-        $deleteDataFromArr2 = [];
+        $newDataFromArr = []; //最新資料增加內容
+        $deleteDataFromArr2 = []; //舊資料多餘內容(淘汰)
         $i = 0;
         foreach ($diffStr as $row) {
             for ($j = 0; $j < count($arr); $j++) {
@@ -335,22 +419,5 @@ class FetchAddrDataController extends Controller
             }
         }
         return [$diffStr, $newDataFromArr, $deleteDataFromArr2];
-    }
-
-/**
- * Store a newly created resource in storage.
- *
- * @param
- * @return
- */
-    public function store($isInit)
-    {
-        if ($isInit == 'true') {
-            $filePath = storage_path($this->folderPathString . '\\' . $this->filename); //舊檔案路徑位置
-        } else {
-            $filePath = storage_path($this->folderPathString . '\\' . $this->filenameN); //新檔案路徑位置
-        }
-        $content = $this->apiFilter($filePath);
-        dd($content);
     }
 }
