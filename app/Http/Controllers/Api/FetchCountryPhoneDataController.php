@@ -87,13 +87,24 @@ class FetchCountryPhoneDataController extends Controller
                 $dataN = file_get_contents(storage_path($dataPathN));
                 $arrDataN = json_decode($dataN, true);
                 //確認新檔案(當前)與最近更新的舊檔案是否有差異，如果有，新增至資料庫
-                if (!$arrDataN == $arrDataO) {
-                    $diff_2row = $this->compareStrArrDiff($arrDataN, $arrDataO);
-                    if (!$diff_2row[0] == []) {
-                        //處理資料並存入資料庫
-                        return $this->storeToTable($diff_2row[0]);
+                $diff_2row = $this->compareStrArrDiff($arrDataN, $arrDataO);
+                //檢測是否有新增的資料
+                if ($diff_2row[0][0] == true || $diff_2row[0][1] == true) {
+                    //處理資料並存入資料庫
+                    $status = $this->storeToTable($diff_2row[1]);
+
+                    if ($status[1]['status'] == 'saveSuccess') {
+                        if ($diff_2row[0][2] == true || $diff_2row[0][3] == true) {
+                            // 刪除舊資料
+                            return $this->destoryToTable($diff_2row[2]);
+                        }
+                    } else {
+                        return $status;
                     }
+                } else {
+                    return ["status" => "noNeedToChange"];
                 }
+
             }
         } else {
             return '爬取失敗';
@@ -112,7 +123,7 @@ class FetchCountryPhoneDataController extends Controller
         //回應執行狀態
         if ($isSave['status'] == 'saveSuccess') {
             //存入phones table
-            $isSave = $this->saveToPhoneTable($arrData['id_to_countrycode']);
+            $isSave = $this->storeToPhoneTable($arrData['id_to_countrycode']);
             if ($isSave['status'] == 'saveSuccess') {
                 return ['執行成功', ['status' => 'saveSuccess']];
             } else {
@@ -130,9 +141,35 @@ class FetchCountryPhoneDataController extends Controller
  */
     public function compareStrArrDiff($arr, $arr2)
     {
-        $diffCountryNPhoneC = array_diff($arr['userinfo_country_code'], $arr2['userinfo_country_code']);
-        $diffPhoneC = array_diff($arr['id_to_countrycode'], $arr2['id_to_countrycode']);
-        return [$diffCountryNPhoneC, $diffPhoneC];
+        $isDiff = [true, true, true, true];
+        $arrCC = $arr['userinfo_country_code'];
+        $arr2CC = $arr2['userinfo_country_code'];
+        $arrIC = $arr['id_to_countrycode'];
+        $arr2IC = $arr2['id_to_countrycode'];
+        unset($arrCC[0]);
+        unset($arr2CC[0]);
+        $newDataFromArrCC = array_diff_assoc($arrCC, $arr2CC);
+        $deleteDataFromArr2CC = array_diff_assoc($arr2CC, $arrCC);
+
+        $newDataFromArrIC = array_diff_assoc($arrIC, $arr2IC);
+        $deleteDataFromArr2IC = array_diff_assoc($arr2IC, $arrIC);
+
+        if ($newDataFromArrCC == []) {
+            $isDiff[0] = false;
+        }
+        if ($deleteDataFromArr2CC == []) {
+            $isDiff[1] = false;
+        }
+        if ($newDataFromArrIC == []) {
+            $isDiff[2] = false;
+        }
+        if ($deleteDataFromArr2IC == []) {
+            $isDiff[3] = false;
+        }
+
+        return [$isDiff,
+            ['userinfo_country_code' => $newDataFromArrCC, 'id_to_countrycode' => $newDataFromArrIC], ['userinfo_country_code' => $deleteDataFromArr2CC, 'id_to_countrycode' => $deleteDataFromArr2IC],
+        ];
     }
 
     /**
@@ -173,7 +210,6 @@ class FetchCountryPhoneDataController extends Controller
                     $addCountry->name = $value;
                     $addCountry->save();
                     $i++;
-                    // dd('test');
                 }
             } catch (exception $e) {
                 try {
@@ -201,6 +237,33 @@ class FetchCountryPhoneDataController extends Controller
         }
         return ['status' => 'saveSuccess', 'saveLavel' => $level, 'FailedFrom' => $i, 'alreadySaveindex' => $i - 1];
     }
+    public function destoryToTable($arrData)
+    {
+        $arrCC = $arrData['userinfo_country_code'];
+        $arrIC = $arrData['id_to_countrycode'];
+        $level = 0;
+        $i = 0;
+        foreach ($arrCC as $key => $value) {
+            $isSuccess = $this->destroyCountryTable($level, $key, $value);
+            if ($isSuccess) {
+                $i++;
+            } else {
+                return ['status' => 'deleteCountryFailed', 'errorIndex' => $i];
+            }
+        }
+        $i;
+        foreach ($arrIC as $key => $value) {
+            $country = Country::where('code', $key)->latest('created_at')->first();
+            $isSuccess = $this->destroyPhoneTable($key, $value, $country);
+            if ($isSuccess) {
+                $i++;
+            } else {
+                return ['status' => 'deletePhoneFailed', 'errorIndex' => $i];
+            }
+            return ['status' => 'deleteSuccess'];
+        }
+// return[]
+    }
 
     /**
      *
@@ -211,7 +274,9 @@ class FetchCountryPhoneDataController extends Controller
     {
         try {
             $country = Country::where('code', $key)->where('name', $value)->where('level', $level)->latest('created_at')->first();
-            $country->delete();
+            if (!$country == null) {
+                $country->delete();
+            }
         } catch (Exception $e) {
             return [false, $e];
         }
@@ -223,7 +288,7 @@ class FetchCountryPhoneDataController extends Controller
      *將國際電話碼資料存入資料庫，不成功時嘗試執行資料回滾
      * @return 執行後的狀態與相關資訊
      */
-    public function saveToPhoneTable($keyValues)
+    public function storeToPhoneTable($keyValues)
     {
         $i = 0;
         foreach ($keyValues as $key => $value) {
