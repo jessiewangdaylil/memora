@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\City;
+use App\Models\Country;
+use App\Models\Road;
 use App\Models\TempAddress;
+use App\Models\Town;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -16,49 +18,51 @@ use League\Csv\Reader;
 
 class FetchAddrDataController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
 //建立路徑
     public $folderPathString = 'app\public\csv';
     public $filename = 'data.csv'; //檔案名稱(包含附檔名)
     public $filenameN = 'data_new.csv'; //新檔案名稱(包含附檔名)
     public $url = 'https://data.moi.gov.tw/MoiOD/System/DownloadFile.aspx?DATA=AE071E62-42F3-4DE1-BA2A-03F2DBFB8713';
+
+/**
+ *
+ * 取得地址的API方法
+ * @return
+ */
     public function getAddrApi()
     {
 //處裡存放路徑
-        $folderPath = storage_path($this->folderPathString); //檔案位置的資料夾位置
-        $filePath = storage_path($this->folderPathString . '\\' . $this->filename); //檔案路徑位置
-        $filePathN = storage_path($this->folderPathString . '\\' . $this->filenameN); //檔案路徑位置
-
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
+        //檔案位置的資料夾位置
+        $folderPath = storage_path($this->folderPathString);
+        //檔案路徑位置
+        $filePath = storage_path($this->folderPathString . '\\' . $this->filename);
+        //檔案路徑位置
+        $filePathN = storage_path($this->folderPathString . '\\' . $this->filenameN);
 //爬蟲:到網路上取得資料
         $response = Http::get($this->url);
+        //檢查是否爬取成功
         if ($isSucces = $response->ok()) {
-            //檢查檔案位置的資料夾是否存在
+            //檢查檔案路徑資料夾是否存在
+            if (!File::isDirectory($this->folderPathString)) {
+                File::makeDirectory($folderPath, 0700, true, true);
+            }
+            //檢查檔案是否存在
             if (!File::exists($filePath)) {
                 //不存在
-                if (!File::isDirectory($this->folderPathString)) {
-                    File::makeDirectory($folderPath, 0700, true, true);
-                    file_put_contents($filePath, $response->body());
-                    //不管檔案是否已存在將爬蟲資料存入指定路徑檔案中，如果不存在自動生成
-                    // base File 當前檔案
-                    $csviteratorB = $this->readCSV($filePath);
-                    //iterator轉換成Array
-                    $data = iterator_to_array($csviteratorB);
-                    //存取至資料庫
-                    $isSave = $this->storeToTempAddr($data, $this->url, $filePath);
-                    //iterator轉換成Array
-                    $basicData = iterator_to_array($csviteratorB);
-                    //爬取資料分city、town、road項處裡->資料留存
-                    $addrData = $this->addrApiFilter($basicData);
-                    $this->createAddrdatabase($addrData);
-
-                }
-
+                //將爬取的CSV存入指定檔案路徑
+                file_put_contents($filePath, $response->body());
+                // base File 當前檔案
+                $csviteratorB = $this->readCSV($filePath);
+                //iterator轉換成Array
+                $data = iterator_to_array($csviteratorB);
+                //存取至資料庫
+                $isSave = $this->storeToTempAddr($data, $this->url, $filePath);
+                //iterator轉換成Array
+                $basicData = iterator_to_array($csviteratorB);
+                //爬取資料分city、town、road項處裡->資料留存
+                $addrData = $this->addrApiFilter($basicData);
+                $this->createAddrdatabase($addrData);
+                dd('wait');
             } else {
                 //將新爬取的檔案存入本機
                 file_put_contents($filePathN, $response->body());
@@ -82,7 +86,7 @@ class FetchAddrDataController extends Controller
                 $addrDataD = $this->addrApiFilter($diffFromN);
                 $this->createAddrdatabase($addrDataD);
                 dd($addrDataD);
-                return $isSave;
+                // return $isSave;
                 //沒爬成功要做的通知
             }
         } else {
@@ -96,27 +100,88 @@ class FetchAddrDataController extends Controller
      */
     public function createAddrdatabase($addrData)
     {
+
         $city = $addrData[0];
-        // dd($city);
         $town = $addrData[1];
         $road = $addrData[2];
         $i = 0;
-        foreach ($city as $key) {
-            // try {
-            $addCity = new City;
-            $addCity->name = $key[4];
-            // $addCity->level = $key[0];
-            // $addCity->country_id = ;
-            $addCity->save();
-            $i++;
-            // } catch (Exception $e) {
-            //     dd('failed');
-            //     return ['saveLavel' => '1', 'status' => 'saveFailed', 'FailedFrom' => $i, 'errorInfo' => $e];
-            // }
-
-        }
-
+        $country = Country::where('code', 'TW')->first();
+        // $this->storeCityTable($city, $country);
+        // $this->storeTownTable($town, $city, $country);
+        $this->storeRoadTable($road, $town, $city, $country);
+        dd('wait2');
         return ['saveLavel' => '1', 'status' => 'success'];
+    }
+
+    public function storeCityTable($city, $country)
+    {
+        //$datas 0階層 1編號 2 父關聯  3子關聯 4 名稱
+        $i = 0;
+        foreach ($city as $key) {
+            try {
+                if (count(City::where('name', $key[4])->where('level', $key[0])->where('country_id', $country->id)->get()) == 0) {
+                    $addCity = new City;
+                    $addCity->name = $key[4];
+                    $addCity->level = $key[0];
+                    $addCity->country_id = $country->id;
+                    $addCity->save();
+                    $i++;
+                }
+            } catch (Exception $e) {
+                dd('error');
+                $k = $i;
+                return [];
+            }
+        }
+        return [];
+    }
+    public function storeTownTable($town, $city, $country)
+    {
+        //$datas 0階層 1編號 2 父關聯  3子關聯 4 名稱
+        $i = 0;
+
+        foreach ($town as $key) {
+            try {
+                $cityQuery = City::where('name', $city[$key[2]][4])->where('country_id', $country->id)->first();
+                if (count(Town::where('name', substr($key[4], 3 * 3, 3 * 3))->where('level', $key[0])->where('city_id', $cityQuery->id)) == 0) {
+                    $addTown = new Town;
+                    $addTown->name = substr($key[4], 3 * 3, 3 * 3);
+                    $addTown->level = $key[0];
+                    $addTown->city_id = $cityQuery->id;
+                    $addTown->save();
+                    $i++;
+                }
+            } catch (Exception $e) {
+                $k = $i;
+                return [];
+            }
+        }
+        return [];
+    }
+    public function storeRoadTable($road, $town, $city, $country)
+    {
+//$datas 0階層 1編號 2 父關聯  3子關聯 4 名稱
+        $i = 0;
+
+        foreach ($road as $key) {
+            try {
+                $cityQuery = City::where('name', $city[$town[$key[2]][2]][4])->where('country_id', $country->id)->first();
+                $townQuery = Town::where('city_id', $cityQuery->id)->first();
+                if (Road::where('name', $key[4])->where('level,', $key[0])->where('town_id', $townQuery->id)) {
+                    $addRoad = new Road;
+                    $addRoad->name = $key[4];
+                    $addRoad->level = $key[0];
+                    $addRoad->town_id = $townQuery->id;
+                    $addRoad->save();
+                    $i++;
+                }
+            } catch (Exception $e) {
+                $k = $i;
+                return [];
+            }
+        }
+        return [];
+
     }
     /**
      *
@@ -190,7 +255,7 @@ class FetchAddrDataController extends Controller
                         //city與Town前一個相同
                         //$datas 0階層 1編號 2 父關聯  3子關聯 4 名稱//pushIndex 1 city 2 town 3 road  (country 0)
                         $father = $townDatas[$createIndex[1] - 1][1];
-                        array_push($roadDatas, [2, $createIndex[2]++, $father, null, $key[2]]);
+                        array_push($roadDatas, [3, $createIndex[2]++, $father, null, $key[2]]);
                         array_push($townDatas[$createIndex[1] - 1][3], $roadDatas[$createIndex[2] - 1][1]);
                         // dd($cityDatas, $townDatas, $roadDatas);
 
@@ -198,9 +263,9 @@ class FetchAddrDataController extends Controller
                         //city與前一個相同、Town與前一個不相同 #流程3
                         //$datas 0階層 1編號 2 父關聯  3子關聯 4 名稱//pushIndex 1 city 2 town 3 road  (country 0)
                         $father = $cityDatas[$createIndex[0] - 1][1];
-                        array_push($townDatas, [1, $createIndex[1]++, $father, array(), $key[1]]);
+                        array_push($townDatas, [2, $createIndex[1]++, $father, array(), $key[1]]);
                         $father = $townDatas[$createIndex[1] - 1][1];
-                        array_push($roadDatas, [2, $createIndex[2]++, $father, null, $key[2]]);
+                        array_push($roadDatas, [3, $createIndex[2]++, $father, null, $key[2]]);
                         array_push($cityDatas[$createIndex[0] - 1][3], $townDatas[$createIndex[1] - 1][1]);
                         array_push($townDatas[$createIndex[1] - 1][3], $roadDatas[$createIndex[2] - 1][1]);
                         // dd($cityDatas, $townDatas, $roadDatas);
@@ -220,7 +285,8 @@ class FetchAddrDataController extends Controller
                 }
             } elseif ($i == 2) {
                 //第一筆   #流程1
-                //$datas 0階層 1編號 2 父關聯  3子關聯 4 名稱//pushIndex 1 city 2 town 3 road  (country 0)
+                //$datas 0階層 1編號 2 父關聯  3子關聯 4 名稱
+                //pushIndex 1 city 2 town 3 road  (country 0)
                 array_push($cityDatas, [1, $createIndex[0]++, null, array(), $key[0]]);
                 array_push($townDatas, [2, $createIndex[1]++, null, array(), $key[1]]);
                 array_push($roadDatas, [3, $createIndex[2]++, null, null, $key[2]]);
@@ -287,39 +353,4 @@ class FetchAddrDataController extends Controller
         $content = $this->apiFilter($filePath);
         dd($content);
     }
-
-/**
- * Display the specified resource.
- *
- * @param  int  $id
- * @return \Illuminate\Http\Response
- */
-    public function show($id)
-    {
-        //
-    }
-
-/**
- * Update the specified resource in storage.
- *
- * @param  \Illuminate\Http\Request  $request
- * @param  int  $id
- * @return \Illuminate\Http\Response
- */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-/**
- * Remove the specified resource from storage.
- *
- * @param  int  $id
- * @return \Illuminate\Http\Response
- */
-    public function destroy($id)
-    {
-        //
-    }
-
 }

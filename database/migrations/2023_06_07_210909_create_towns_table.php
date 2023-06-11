@@ -13,12 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('roads', function (Blueprint $table) {
+        Schema::create('towns', function (Blueprint $table) {
             $table->id();
             $table->string('name'); //路名
-            $table->integer('level')->default(3); //階層(0國家 1城市 2鄉政區 3路名)
-            $table->foreignId('town_id')->constrained('towns'); //所屬鄉政
+            $table->integer('level')->default(2); //階層(0國家 1城市 2鄉政區 3路名)
+            $table->foreignId('city_id')->constrained('cities'); //所屬城市
             $table->timestamps();
+
         });
     }
 
@@ -29,9 +30,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('roads', function (Blueprint $table) {
-            $table->dropForeign(['town_id']);
+        Schema::table('towns', function (Blueprint $table) {
+            $table->dropForeign(['city_id']);
         });
-        Schema::dropIfExists('roads');
+        Schema::dropIfExists('towns');
     }
 };
