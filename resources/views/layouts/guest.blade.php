@@ -11,14 +11,23 @@
         <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap">
 
         <!-- Scripts -->
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.12.1/dist/cdn.min.js"></script>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.12.1/dist/cdn.min.js"></script>
            @livewireStyles
     </head>
     <body>
         <div class="font-sans text-gray-900 antialiased">
             {{ $slot }}
         </div>
+        <script>
+          <!-- Flash Message Overlay會用到，需保留 -->
+            $('#flash-overlay-modal').modal();
+          <!-- Flash Message 3秒之後消失，非必須 -->
+         $('div.alert').delay(3000).fadeOut(350);
+        </script>
+
          @livewireScripts
     </body>
+
 </html>
