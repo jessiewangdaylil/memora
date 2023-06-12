@@ -16,7 +16,7 @@ class AddColumnsUsersTable extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->string('username')->nullable()->unique(); //帳號
             $table->string('nickname', 45)->nullable(); //暱稱
-            $table->string('gender', 20)->nullable(); //性別
+            $table->string('gender', 20)->nullable(); //性別  F:女 M:男
             $table->string('identify', 20)->nullable(); //身分證字號
             $table->string('title', 45)->nullable(); //頭銜
             $table->date('birthday')->nullable(); //生日
