@@ -1,6 +1,13 @@
-        <form method="POST" action="{{ url('/update_profile') }}">
+        <form method="POST" action="{{ url('/member_rigister') }}">
             @csrf
-{{$locale}}
+            {{--  --}}
+            <input type="hidden" id="userCountryId" name="userCountryId" value="{{$userCountryId}}">
+            <input type="hidden" id="userCityId" name="userCityId" value="{{$userCityId}}">
+            <input type="hidden" id="userTownId" name="userTownId" value="{{$userTownId}}">
+            <input type="hidden" id="userRoadId" name="userRoadId" value="{{$userRoadId}}">
+            <input type="hidden" id="userPLocalId" name="userPLocalId" value="{{$userPLocalId}}">
+            <input type="hidden" id="userPCountryId" name="userPCountryId" value="{{$userPCountryId}}">
+            {{--  --}}
             <div class="flex mt-4">
                 <div class="w-1/2 mr-3">
                   <x-jet-label for="identify" value="{{ __('identify') }}" />
@@ -11,7 +18,6 @@
                 <x-jet-input id="username" class="block mt-1 w-full" type="text" name="username" :value="old('username')" required  autocomplete="username" />
                </div>
             </div>
-
             <div class="flex mt-4">
               <div class="w-1/2 mr-3">
                 <x-jet-label for="first_name" value="{{ __('first_name') }}" />
@@ -30,34 +36,36 @@
               <div class="w-1/2">
                 <x-jet-label for="gender" value="{{ __('body_gender') }}"
                 class="mb-4" />
-                <x-jet-input id="gender" class="w-1/4" type="radio" name="gender" checkd="checked" value="old({{__('men')}})" />{{__('men')}}
-                <x-jet-input id="gender" class="w-1/4" type="radio" name="gender"  value="old({{__('female')}})" />{{__('female')}}
+                <x-jet-input id="gender" class="w-1/4" type="radio" name="gender" checkd="checked" value="m" />{{__('men')}}
+                <x-jet-input id="gender" class="w-1/4" type="radio" name="gender"  value="f" />{{__('female')}}
               </div>
             </div>
           <div class="mt-4 flex">
             <div>
               <x-jet-label for="tel" value="{{__('tel')}}" />
-              <x-select id="pZone" name="pZone" :options="$pZone" class="w-1/6 mr-2" />
+              <x-select id="pLocal" name="pLocal" :options="$pLocal" class="w-1/6 mr-2"
+              wire:change="localPhoneChange"
+              wire:model="userPLocal" />
               <x-jet-input id="tel" class="mt-1   " type="text" name="tel" :value="old('tel')" required  autocomplete="tel" />
               </div>
            </div>
           <div class="mt-4 flex">
             <div>
               <x-jet-label for="mobile" value="{{__('moblie')}}" />
-             <x-select id="mobile" name="mobile" :options="$pCountry" class="w-1/6 mr-2" />
+             <x-select id="mobile" name="mobile" :options="$pCountry" class="w-1/6 mr-2"
+             wire:change="countryPhoneChange" wire:model="userPCountry" />
               <x-jet-input id="mobile" class="mt-1   " type="text" name="mobile" :value="old('mobile')" required  autocomplete="mobile" />
               </div>
            </div>
           <div class="mt-4 flex">
             <div>
-
               <x-jet-label for="address" value="{{__('address')}}" />
               {{--  --}}
              <x-select id="city" name="city"  :options="$city" class="w-1/6 mr-2" wire:change="cityChangetown" wire:model="userCity" />
              {{--  --}}
              <x-select id="town" name="town"  :options="$town" class="w-1/6 mr-2" wire:change="townChangeRoad" wire:model="userTown" />
              {{--  --}}
-              <x-select id="zone" name="zone" :options="$road" class="w-1/6 mr-1" />
+              <x-select id="road" name="road" :options="$road" class="w-1/6 mr-1" />
               <x-jet-input id="address" class="mt-1 w-full  " type="text" name="address" :value="old('address')" required  autocomplete="address" />
               </div>
            </div>

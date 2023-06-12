@@ -4,6 +4,7 @@ namespace App\View\Livewire\Authlevel;
 
 use App\Models\City;
 use App\Models\Country;
+use App\Models\LocalPhoneCode;
 use App\Models\PhoneCode;
 use App\Models\Road;
 use App\Models\Town;
@@ -12,7 +13,11 @@ use Livewire\Component;
 class MemberRigister extends Component
 {
     public $locale;
-    public $pZone;
+
+// =LocalPhoneCode::where('country_id',Country::where(''));
+
+    public $pLocal;
+    public $pLocalId;
     public $pCountry;
     public $pCountryId;
     public $city;
@@ -21,16 +26,20 @@ class MemberRigister extends Component
     public $townId;
     public $road;
     public $roadId;
+    public $userCountryId;
     public $userCity;
     public $userCityId;
     public $userTown;
     public $userTownId;
     public $userRoad;
     public $userRoadId;
+    public $userPLocal;
+    public $userPLocalId;
+    public $userPCountry;
+    public $userPCountryId;
 
     public function cityChangetown()
     {
-
         //取得city選單改變值在資料庫中的id
         $this->userCityId = $this->valueGetId($this->cityId, $this->userCity);
         //更動town、road選單的選擇項目
@@ -52,7 +61,6 @@ class MemberRigister extends Component
     }
     public function townChangeRoad()
     {
-
         //取得town選單改變值在資料庫中的id
         $this->userTownId = $this->valueGetId($this->townId, $this->userTown);
         //更動road選單的選擇項目
@@ -65,17 +73,46 @@ class MemberRigister extends Component
         //更新使用者被動選擇的road選單項目在資料庫中的id
         $this->userRoadId = $road[0]->id;
     }
+    public function localPhoneChange()
+    {
+        $this->userPLocalId = $this->pLocalId[$this->userPLocal];
+    }
+    public function countryPhoneChange()
+    {
+        $this->userPCountryId = $this->pCountryId[$this->userPCountry];
+
+    }
     public function valueGetId($valueArr, $value)
     {
         return $valueArr[$value];
     }
-    public function mount()
+    public function updateCountry()
     {
-        $this->pZone = ['02', '03', '037', '04', '049', '05', '06', '07', '08', '082', '0826', '0836', '089'];
-        //國際電話碼
-        //當前國家為預設
         $countryCode = substr($this->locale, strpos($this->locale, '_') + 1, 3 * 3);
         $country = Country::where('code', $countryCode)->first();
+        return $country;
+    }
+    public function updateLocalphoneCode($LocalphoneCodequery)
+    {
+        $i = 0;
+        foreach ($LocalphoneCodequery as $key) {
+            $localPhoneCode[$i] = $key->code;
+            $localPhoneCodeId[$i++] = $key->id;
+        }
+        return [$localPhoneCode, $localPhoneCodeId];
+    }
+    public function mount()
+    {
+
+        $country = $this->updateCountry();
+        $this->userCountryId = $country->id;
+        //當地電話碼
+        $LocalphoneCodequery = LocalPhoneCode::where('country_id', $country->id)->get();
+        $temp = $this->updateLocalphoneCode($LocalphoneCodequery);
+        $this->pLocal = $temp[0];
+        $this->pLocalId = $temp[1];
+        //國際電話碼
+        //當前國家為預設
         $phoneCodequery = PhoneCode::where('country_id', $country->id)->first();
         $i = 0;
         $this->pCountry[$i] = $country->name . ' (' . $phoneCodequery->code . ')';
@@ -109,6 +146,12 @@ class MemberRigister extends Component
         $this->userCityId = $this->valueGetId($this->cityId, $this->userCity);
         $this->userTownId = $this->valueGetId($this->townId, $this->userTown);
         $this->userRoadId = $this->valueGetId($this->roadId, $this->userRoad);
+        //當地電話碼
+        $this->userPLocal = 0;
+        $this->userPLocalId = $this->pLocalId[$this->userPLocal];
+        //國際電話碼
+        $this->userPCountry = 0;
+        $this->userPCountryId = $this->pCountryId[$this->userPCountry];
 
     }
     public function getSelectArr($modelSrr)

@@ -23,15 +23,13 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-    Route::get('/member_rigister', function () {
-        $pzone = ['02', '03', '04', '05'];
-        return view('authlevel.member_rigister', compact('pzone'));
-    });
-    Route::post('/update_profile', 'App\Http\Controllers\UpdateProfileController@update');
 
+    Route::namespace ('App\Http\controllers')->group(function () {
+        Route::get('/member_rigister', 'AuthController@authLevel2');
+        Route::post('/member_rigister', 'AuthController@authLevel2Store');
+        Route::get('/dashboard', 'AuthController@dashboard')->name('dashboard');
+
+    });
 });
 
 Route::group(['prefix' => 'admin'], function () {

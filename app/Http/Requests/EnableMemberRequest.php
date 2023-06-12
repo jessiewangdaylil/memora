@@ -24,19 +24,27 @@ class EnableMemberRequest extends FormRequest
      */
     public function rules()
     {
-        $birth12 = Carbon::now()->subYears(12)->toString();
-
+        $birth12Y = Carbon::now()->subYears(12)->toString();
         return [
+            'identify' => "required|max:20|alpha_num",
             'username' => "required|filled",
             'first_name' => "required|max:45|filled",
             'last_name' => "required|max:45|filled",
-            'gender' => "required|max:20|alpha",
-            'identify' => "required|max:20|alpha_num",
-            'birthday' => "required|before:{$birth12}",
-            'tel' => "required|max:14|numeric",
-            'mobile' => "required|max:20|numeric",
-            'post_id' => "required|max:5",
-            'address' => "required|max:100|filled"];
+            'birthday' => "required|before:{$birth12Y}",
+            'gender' => "required",
+            'tel' => "max:14|regex:/^[0-9]+$/",
+            'mobile' => "required|max:20|regex:/^[0-9]+$/",
+            'city' => "required",
+            'town' => "required",
+            'road' => "required",
+            'address' => "required|max:100|filled",
+            'userCountryId' => "required|regex:/^[0-9]+$/",
+            'userCityId' => "required|regex:/^[0-9]+$/",
+            'userTownId' => "required|regex:/^[0-9]+$/",
+            'userRoadId' => "required|regex:/^[0-9]+$/",
+            'userPLocalId' => "required|regex:/^[0-9]+$/",
+            'userPCountryId' => "required|regex:/^[0-9]+$/",
+        ];
 
     }
 }

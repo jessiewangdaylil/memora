@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('auth_levels', function (Blueprint $table) {
             $table->id();
             $table->string('title', 20);
+            $table->string('role_name', 20);
             $table->string('desc', 200)->nullable();
             $table->boolean('enable')->default(true);
             $table->timestamps();

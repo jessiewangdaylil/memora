@@ -21,7 +21,7 @@ return new class extends Migration
             $table->foreignId('town_id')->constrained('towns'); //居住鄉政區
             $table->foreignId('road_id')->constrained('roads'); //居住道路
             $table->foreignId('phone_code_id')->constrained('phone_codes'); //手機國際碼
-            $table->foreignId('local_phone_codes_id')->constrained('local_phone_codes'); //手機國際碼
+            $table->foreignId('local_phone_code_id')->constrained('local_phone_codes'); //手機國際碼
             $table->foreignId('auth_level_id')->constrained('auth_levels'); //會員認證階段
             $table->timestamps();
         });
@@ -42,7 +42,7 @@ return new class extends Migration
             $table->dropForeign(['town_id']);
             $table->dropForeign(['road_id']);
             $table->dropForeign(['phone_code_id']);
-            $table->dropForeign(['local_phone_codes_id']);
+            $table->dropForeign(['local_phone_code_id']);
         });
         Schema::dropIfExists('user_advances');
     }
