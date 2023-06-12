@@ -27,7 +27,9 @@ class FetchDataCommand extends Command
      */
     public function handle()
     {
-        app()->call('App\Http\Controllers\Api\FetchDataController@getApi');
+        app()->call('App\Http\Controllers\Api\FetchCountryPhoneDataController@getCountryPhoneCodeApi');
+
+        app()->call('App\Http\Controllers\Api\FetchAddrDataController@getAddrApi');
         return Command::SUCCESS;
     }
 }
