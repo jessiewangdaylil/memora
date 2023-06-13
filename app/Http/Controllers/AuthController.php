@@ -79,8 +79,8 @@ class AuthController extends Controller
                     'auth_level_id' => AuthLevel::where('title', '會員功能啟用')->first()->id,
                 ]);
             } else {
-                // flash('您在過去已申請!!')->overlay();
-                flash('您在過去已申請!!')->success(); //綠色框
+                flash('您在過去已申請!!')->overlay();
+                // flash('您在過去已申請!!')->success(); //綠色框
                 session(['event' => 'authLevel2', 'status' => 'noNeed']);
                 return redirect('/dashboard');
             }

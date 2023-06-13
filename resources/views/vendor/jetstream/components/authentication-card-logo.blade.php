@@ -1,4 +1,4 @@
-<a href="/">
+<a href="{{url('/')}}">
     <img src="{{asset('img/logo/logo2_footer.png')}}" height=100px width=100px alt="">
 </a>
 {{-- <svg class="w-16 h-16" viewbox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -15,6 +15,7 @@
                     <x-jet-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                         {{ __('會員管理') }}
                     </x-jet-nav-link>
+          @include('flash::message')
                 </div>
             </div>
 

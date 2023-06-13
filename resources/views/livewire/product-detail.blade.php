@@ -4,6 +4,7 @@
 
       <div class="row">
         <div class="col-md-12 d-flex flex-column align-items-center">
+          <h5>{{$item->title}}</h5>
           <p>單價${{$item->price_new}}</p>
           <br>
           <p>{{__('Quantity')}}</p>

@@ -4,6 +4,7 @@
 
       <div class="row">
         <div class="col-md-12 d-flex flex-column align-items-center">
+          <h5>{{$item->title}}</h5>
           <p>單價${{$item->price_new}}</p>
           <br>
           {{-- @include('includes._cart_counter') --}}
@@ -18,8 +19,8 @@
     </div>
 @else
     <div class="{{$class[9]}} d-flex align-items-center justify-content-center">
-        <a href="{{url('/login')}}" class="btn_3"
-        >{{__('Add to cart')}}</a>
+        <a href="{{url('/member_rigister')}}" class="btn_3"
+        >{{__('Activate function')}}</a>
     </div>
 @endif
  <script>

@@ -38,7 +38,7 @@
                     @endforeach
                   </div>
 
-              @if(Auth::check())
+              @if($isLevel2)
                   @livewire('product-detail',
                     [
                       'class'=>[

@@ -23,11 +23,16 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-
     Route::namespace ('App\Http\controllers')->group(function () {
         Route::get('/member_rigister', 'AuthController@authLevel2');
         Route::post('/member_rigister', 'AuthController@authLevel2Store');
         Route::get('/dashboard', 'AuthController@dashboard')->name('dashboard');
+    });
+    Route::namespace ('App\Http\controllers')->group(function () {
+        Route::get('/product_details/{item}', 'SiteController@product_details');
+        Route::get('/add_item/{item}', 'SiteController@addItem');
+        Route::get('/checkout', 'SiteController@checkout');
+        Route::get('/confirmation', 'SiteController@confirmation');
 
     });
 });
@@ -36,24 +41,19 @@ Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 });
 Route::namespace ('App\Http\controllers')->group(function () {
-    Route::get('/logout1', 'SiteController@logout');
     Route::get('/about', 'SiteController@about');
     Route::get('/', 'SiteController@index');
     Route::get('/shop', 'SiteController@shop');
-    Route::get('/product_details/{item}', 'SiteController@product_details');
-    Route::get('/add_item/{item}', 'SiteController@addItem');
     Route::get('/elements', 'SiteController@elements');
     Route::get('/cart', 'SiteController@cart');
-    Route::get('/checkout', 'SiteController@checkout');
-    Route::get('/confirmation', 'SiteController@confirmation');
+    Route::get('/logout1', 'SiteController@logout');
+
     Route::get('/contact', 'SiteController@contact');
     Route::post('/contactstored', 'SiteController@storeContact');
-
     Route::get('/blogsidebar', 'SiteController@blogSidebar');
     Route::get('/blog_details/{id}', 'SiteController@blog_details');
     Route::get('/blog/{cgies?}', 'SiteController@blog');
     Route::post('/commentstored', 'SiteController@StoreComment');
-
     Route::get('/contact2', 'SiteController@contact2'); //表單元素集測試
     Route::post('/contactstored2', 'SiteController@storeContactTest'); //表單元素集測試
     Route::get('getcart', function () {

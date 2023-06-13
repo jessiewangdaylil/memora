@@ -11,6 +11,7 @@ use App\Models\Element;
 use App\Models\Item;
 use App\Models\Tag;
 use App\Models\User;
+use App\Models\UserAdvance;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -95,7 +96,11 @@ class SiteController extends Controller
 //===============================================================
     public function product_details(Item $item)
     {
-        return view('product_details', compact('item'));
+        $isLevel2 = false;
+        if (!UserAdvance::find(Auth::id()) == null) {
+            $isLevel2 = true;
+        }
+        return view('product_details', compact('item', 'isLevel2'));
     }
 //===============================================================
     public function addItem(Item $item)
