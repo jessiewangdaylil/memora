@@ -49,6 +49,8 @@
         </div>
         <div class="widget health-widget" id="glucose">
           <i class="bi bi-chat-heart-fill main-icon"></i>
+          <h5>尋找同伴</h5>
+          <p class="grey">14個推薦 <i class="bi bi-arrow-right grey"></i><a href="{{url('/recommend_relation')}}" style="color:#008080">一探究竟</a> </p>
           <h5>我的訊息</h5>
           <p class="grey">14則新消息 <i class="bi bi-arrow-right grey"></i></p>
           {{-- <span class="hero">- 138 mg/dl</span> --}}

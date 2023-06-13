@@ -110,4 +110,10 @@ class AuthController extends Controller
         $likeItems = Item::find($itemIds);
         return view('profile.like-item-list', compact(['userItemLikes', 'likeItems']));
     }
+    public function recommendRelation()
+    {
+        $users = user::whereNot('id', Auth::id())->get();
+
+        return view('profile.recommended-relationship', compact(['users']));
+    }
 }

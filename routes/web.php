@@ -28,6 +28,7 @@ Route::middleware([
         Route::get('/member_rigister', 'AuthController@authLevel2');
         Route::post('/member_rigister', 'AuthController@authLevel2Store');
         Route::get('/like_item_list', 'AuthController@likeItemList');
+        Route::get('/recommend_relation', 'AuthController@recommendRelation');
 
     });
     Route::namespace ('App\Http\controllers')->group(function () {
