@@ -7,7 +7,9 @@
 
         <title>{{ config('app.name', 'Laravel') }}</title>
         <!-- CSS -->
-     <link rel="stylesheet" href="{{asset('css/bootstrap.min.css')}}">
+     {{-- flash --}}
+     {{-- <link rel="stylesheet" href="{{asset('css/bootstrap.min.css')}}"> --}}
+
         <!-- Fonts -->
 
         <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap">

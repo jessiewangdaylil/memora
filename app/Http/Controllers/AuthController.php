@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\EnableMemberRequest;
 use App\Models\AuthLevel;
+use App\Models\Item;
 use App\Models\User;
 use App\Models\UserAdvance;
+use App\Models\UserItemLike;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -31,7 +33,8 @@ class AuthController extends Controller
         $today = Carbon::now();
         $date = $today->toDateString();
         $time = $today->toTimeString();
-        return view('dashboard', compact(['userAdvance', 'date', 'time', 'name']));
+        $userItemLike = UserItemLike::where('user_id', Auth::id())->get();
+        return view('dashboard', compact(['userAdvance', 'date', 'time', 'name', 'userItemLike', 'user']));
     }
     public function authLevel2()
     {
@@ -99,5 +102,12 @@ class AuthController extends Controller
             session(['event' => 'authLevel2', 'status' => 'failed']);
             return redirect('/member_rigister');
         }
+    }
+    public function likeItemList()
+    {
+        $userItemLikes = UserItemLike::where('user_id', Auth::id())->get();
+        $itemIds = $userItemLikes->pluck('item_id');
+        $likeItems = Item::find($itemIds);
+        return view('profile.like-item-list', compact(['userItemLikes', 'likeItems']));
     }
 }

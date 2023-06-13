@@ -11,7 +11,8 @@
         <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap">
 
         <!-- Scripts -->
-       <link rel="stylesheet" href="{{asset('css/bootstrap.min.css')}}">
+          {{-- flash --}}
+       {{-- <link rel="stylesheet" href="{{asset('css/bootstrap.min.css')}}"> --}}
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.12.1/dist/cdn.min.js"></script>
            @livewireStyles

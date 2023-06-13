@@ -37,11 +37,10 @@
             <label for="name">{{$name}}</label>
           </div>
           <div class="input">
-            <label for="email">Email</label>
+            <label for="email"><p style="color:#a54d19">EMAIL</p>  {{$user->email}}</label>
           </div>
-          <button class="btn-dark">關於我</button>
+          <a href="#" style="color:#a54d19">關於我</a>
         </div>
-
         <div class="widget" id="payment">
           <h4><span>最新通知</span><i class="bi bi-bell-fill"></i></h4>
           <p class="lead grey">
@@ -76,8 +75,9 @@
           <div>
             <div>
               <i class="bi bi-heart-fill main-icon"></i>
-              <h1>收藏好物</h1>
-              <span class="grey">159個禮物等你分享</span>
+             <a href="{{url('/shop')}}"><h1>收藏好物</h1></a>
+              <span class="grey">{{count($userItemLike)}}個禮物等你分享<br><a href="{{url('/like_item_list')}}" style="color:#008080;">查看我的收藏</a></span>
+
             </div>
           </div>
           {{-- <p>Upload My Record</p> --}}

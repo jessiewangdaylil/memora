@@ -24,9 +24,11 @@ Route::middleware([
     'verified',
 ])->group(function () {
     Route::namespace ('App\Http\controllers')->group(function () {
+        Route::get('/dashboard', 'AuthController@dashboard')->name('dashboard');
         Route::get('/member_rigister', 'AuthController@authLevel2');
         Route::post('/member_rigister', 'AuthController@authLevel2Store');
-        Route::get('/dashboard', 'AuthController@dashboard')->name('dashboard');
+        Route::get('/like_item_list', 'AuthController@likeItemList');
+
     });
     Route::namespace ('App\Http\controllers')->group(function () {
         Route::get('/product_details/{item}', 'SiteController@product_details');
