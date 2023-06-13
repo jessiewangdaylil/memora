@@ -103,7 +103,7 @@ class SiteController extends Controller
     public function product_details(Item $item)
     {
         $isLevel2 = false;
-        if (!UserAdvance::find(Auth::id()) == null) {
+        if (count(UserAdvance::where('user_id', Auth::id())->get()) > 0) {
             $isLevel2 = true;
         }
         return view('product_details', compact('item', 'isLevel2'));
