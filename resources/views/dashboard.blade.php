@@ -23,11 +23,18 @@
             src="https://images.unsplash.com/photo-1665699928614-004f7d9f1608?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=855&q=80"
             alt=""
           />
-          </div>
+      </div>
+          @if(count($userAdvance)==0)
           <h2>等你很久了!</h2>
-          <p class="grey">跟我們一起踏上回憶之旅!</p>
+          <p class="grey">跟我們一起踏上回憶之旅!<br> <a href="{{url('/member_rigister')}}" style="color:#008080">點我一下，開啟導航員功能</a></p>
+
+         @else
+          <h2>Hello!導航員</h2>
+          <p class="grey">您正在{{substr($date,0,4)}}年{{substr($date,5,2)}}月{{substr($date,8,2)}}日 {{$time}}時空下，<br>旅途進行中...填滿你的__吧</p>
+
+         @endif
           <div class="input">
-            <label for="name">Full Name</label>
+            <label for="name">{{$name}}</label>
           </div>
           <div class="input">
             <label for="email">Email</label>

@@ -6,16 +6,14 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'Laravel') }}</title>
-
+        <!-- CSS -->
+        {{-- <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"> --}}
         <!-- Fonts -->
-        <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap">
 
+        <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap">
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-        <!-- Styles -->
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         @livewireStyles
     </head>
     <body class="font-sans antialiased">
@@ -38,14 +36,15 @@
                 {{ $slot }}
             </main>
         </div>
+        <script>
+        <!-- Flash Message Overlay會用到，需保留 -->
+        $('#flash-overlay-modal').modal();
+        <!-- Flash Message 3秒之後消失，非必須 -->
+        $('div.alert').delay(3000).fadeOut(350);
+        </script>
+
 
         @stack('modals')
-        <script>
-          <!-- Flash Message Overlay會用到，需保留 -->
-            $('#flash-overlay-modal').modal();
-          <!-- Flash Message 3秒之後消失，非必須 -->
-         $('div.alert').delay(3000).fadeOut(350);
-        </script>
         @livewireScripts
     </body>
 </html>

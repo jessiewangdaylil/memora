@@ -16,11 +16,11 @@ class AuthController extends Controller
     {
         if (session('event') == 'authLevel2') {
             if (session('status') == 'success') {
-                flash('功能成功開通!!')->overlay(); //對話框
-                // flash('功能成功開通!!')->success(); //綠色框
+                // flash('功能成功開通!!')->overlay(); //對話框
+                flash('功能成功開通!!')->success(); //綠色框
             } else if (session('status') == 'noNeed') {
-                flash('您已開通，無需申請')->overlay(); //對話框
-                // flash('您已開通，無需申請')->success(); //綠色框
+                // flash('您已開通，無需申請')->overlay(); //對話框
+                flash('您已開通，無需申請')->success(); //綠色框
             }
             session(['event' => 'nan', 'status' => 'nan']);
         }
@@ -38,11 +38,11 @@ class AuthController extends Controller
             return view('authlevel.member_rigister');
         } else if (session('event') == 'authLevel2') {
             if (session('status') == 'passwordIncorrect') {
-                flash('密碼認證錯誤!!')->overlay();
+                flash('密碼認證錯誤!!')->error();
                 session()->forget(['event', 'status']);
                 return redirect('/member_rigister');
             } else if (session('status') == 'failed') {
-                flash('啟用失敗，請重新申請!!')->overlay();
+                flash('啟用失敗，請重新申請!!')->error();
                 session()->forget(['event', 'status']);
                 return redirect('/member_rigister');
             }
@@ -79,7 +79,8 @@ class AuthController extends Controller
                     'auth_level_id' => AuthLevel::where('title', '會員功能啟用')->first()->id,
                 ]);
             } else {
-                flash('您在過去已申請!!')->overlay();
+                // flash('您在過去已申請!!')->overlay();
+                flash('您在過去已申請!!')->success(); //綠色框
                 session(['event' => 'authLevel2', 'status' => 'noNeed']);
                 return redirect('/dashboard');
             }
@@ -90,7 +91,8 @@ class AuthController extends Controller
         // $user = User::find(Auth::id());
         if ($userAdvance->wasRecentlyCreated && $isUserUpdate) {
             session()->forget(['event', 'status']);
-            flash('申請成功!!')->overlay();
+            // flash('功能成功開通!!')->overlay(); //對話框
+            flash('功能成功開通!!')->success(); //綠色框
             return redirect('/dashboard');
         } else {
             session(['event' => 'authLevel2', 'status' => 'failed']);
