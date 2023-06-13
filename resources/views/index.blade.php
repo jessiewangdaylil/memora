@@ -111,11 +111,7 @@
                                         </span>
                                       </h3>
                                 </div>
-
-
-
-
-                                <a href="{{$introduction->url}}<" class="btn">{{$introduction->url_txt}}</a>
+                                <a href="{{url($introduction->url)}}" class="btn">{{$introduction->url_txt}}</a>
                             </div>
                         </div>
                     </div>
@@ -128,8 +124,6 @@
         <div class="curve-animation">
           <img src="{{asset('img/five-line.png')}}" alt="">
         </div>
-
-
         <!--(2) Introduction  End-->
         <!--?(3) Video Area Start -->
         <div class="video-area">
@@ -137,7 +131,9 @@
                 <div class="row align-items-center">
                     <div class="col-lg-12">
                     <div class="video-wrap">
-                        <div class="play-btn "><a class="popup-video" href="https://www.youtube.com/watch?v=KMc6DyEJp04"><i class="fas fa-play"></i></a></div>
+
+                        <div style="padding:0px" class="play-btn "><video style="opacity: 0.75; object-fit: cover; width: 75%;  border-radius: 15px; " class=""  src="{{asset('video/Welcome To My Channel Video.mp4')}}" autoplay muted loop></video></div>
+                        {{-- <a class="popup-video" href=""> --}}
                     </div>
                     </div>
                 </div>
@@ -154,12 +150,12 @@
 
 
                 <!-- Arrow -->
-                <div class="thumb-content-box">
+                {{-- <div class="thumb-content-box">
                     <div class="thumb-content">
                         <h3>品牌形象影片</h3>
                         {{-- <a href="#"> <i class="flaticon-arrow"></i></a> --}}
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
         <!--(3) Video Area End -->
