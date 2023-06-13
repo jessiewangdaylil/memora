@@ -23,9 +23,10 @@
                                           <a href="{{url('/rigister')}}"><span>{{__('register')}}</span></a>
                                       @endif
                                         </div>
-                                        <div class="favorit-items">
+                                        @livewire('shop-like',['item'=>$item])
+                                        {{-- <div class="favorit-items">
                                             <span class="flaticon-heart"></span>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                     <div class="popular-caption">
                                         <h3><a href="{{url('/product_details/'.$item->id)}}">{{$item->title}}</a></h3>

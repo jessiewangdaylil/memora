@@ -14,6 +14,7 @@ class AuthController extends Controller
 {
     public function dashboard()
     {
+
         if (session('event') == 'authLevel2') {
             if (session('status') == 'success') {
                 // flash('功能成功開通!!')->overlay(); //對話框
