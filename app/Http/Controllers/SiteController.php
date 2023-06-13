@@ -89,9 +89,15 @@ class SiteController extends Controller
 // Card(3) 人氣商品 popular Item => prIm
         $prCount = Item::where('enabled', true)->count();
         $prIm = Item::where('enabled', true)->orderby('star', 'desc')->take($prCount / 5)->get();
+        $isLevel2 = false;
+        if (Auth::check()) {
+            if (count(UserAdvance::where('user_id', Auth::id())->get()) > 0) {
+                $isLevel2 = true;
+            }
+        }
 
         session(['rePage' => request()->path()]);
-        return view('shop', compact('rlImCgy', 'rlIm', 'vlImCgy', 'vlIm', 'prIm'));
+        return view('shop', compact('rlImCgy', 'rlIm', 'vlImCgy', 'vlIm', 'prIm', 'isLevel2'));
     }
 //===============================================================
     public function product_details(Item $item)
