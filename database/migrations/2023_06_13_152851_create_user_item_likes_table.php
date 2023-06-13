@@ -29,7 +29,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('user_item_likes', function (Blueprint $table) {
-            $table->dropForeign(['user_id', 'item_id']);
+            $table->dropForeign(['user_id']);
+            $table->dropForeign(['item_id']);
         });
         Schema::dropIfExists('user_item_likes');
     }
