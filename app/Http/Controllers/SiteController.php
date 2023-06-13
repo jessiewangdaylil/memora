@@ -139,7 +139,9 @@ class SiteController extends Controller
 //===============================================================
     public function checkout()
     {
-        return view('checkout');
+        $cart = \Cart::session(Auth::user()->id)->getContent();
+
+        return view('checkout', compact('cart'));
     }
 //===============================================================
     public function confirmation()

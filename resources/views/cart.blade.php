@@ -100,7 +100,8 @@
                     @livewire('total',)
                     </td>
                   </tr>
-                  <tr class="shipping_area">
+                   @livewire('cart-shipping')
+                  {{-- <tr class="shipping_area">
                     <td></td>
                     <td></td>
                     <td>
@@ -113,6 +114,11 @@
                             <br>{{__('Flat Rate')}}: $5.00
                             <input  type="radio" aria-label="Radio button for following text input">
                           </li>
+                          <select class="shipping_select section_bg">
+                          <option value="1">Select a State</option>
+                          <option value="2">Select a State</option>
+                          <option value="4">Select a State</option>
+                        </select>
                           <li>
                             免運費
                             <input  type="radio" aria-label="Radio button for following text input">
@@ -131,21 +137,17 @@
                           <option value="2">India</option>
                           <option value="4">Pakistan</option>
                         </select>
-                        <select class="shipping_select section_bg">
-                          <option value="1">Select a State</option>
-                          <option value="2">Select a State</option>
-                          <option value="4">Select a State</option>
-                        </select>
+
                         <input class="post_code" type="text" placeholder="Postcode/Zipcode" />
                         <a class="btn_1" href="#">Update Details</a>
                       </div>
                     </td>
-                  </tr>
+                  </tr> --}}
                 </tbody>
               </table>
               <div class="checkout_btn_inner float-right">
                 <a class="btn_1" href="{{url('/shop')}}">探索更多禮物</a>
-                <a class="btn_1 checkout_btn_1" href="#">前往付款</a>
+                <a class="btn_1 checkout_btn_1" href="{{url('/checkout')}}">前往付款</a>
               </div>
             </div>
           </div>
