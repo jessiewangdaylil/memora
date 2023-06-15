@@ -13,11 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('cities', function (Blueprint $table) {
+        Schema::create('manufacturing', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->integer('level')->default(1); //階層(0國家 1城市 2鄉政區 3路名)
-            $table->foreignId('country_id')->constrained('countries')->unllable(); //所屬國家
             $table->timestamps();
         });
     }
@@ -29,9 +26,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('cities', function (Blueprint $table) {
-            $table->dropForeign(['country_id']);
-        });
-        Schema::dropIfExists('cities');
+        Schema::dropIfExists('manufacturing');
     }
 };

@@ -13,11 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('cities', function (Blueprint $table) {
+        Schema::create('shipping_package_types', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->integer('level')->default(1); //階層(0國家 1城市 2鄉政區 3路名)
-            $table->foreignId('country_id')->constrained('countries')->unllable(); //所屬國家
+            $table->string('title', 15);
+            $table->string('color', 10)->unllable();
+            $table->string('box'); //A/F=>普通,B/F=>輕薄,AB/F=>安全
+            $table->boolean('ribbon')->default(false);
+            $table->boolean('decorate')->default(false);
+
             $table->timestamps();
         });
     }
@@ -29,9 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('cities', function (Blueprint $table) {
-            $table->dropForeign(['country_id']);
-        });
-        Schema::dropIfExists('cities');
+        Schema::dropIfExists('shipping_package_types');
     }
 };
